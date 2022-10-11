@@ -60,8 +60,6 @@ def main():
     parser.add_argument('-g', '--reference_genome', help = 'Name of the file containing the reference genome')
     parser.add_argument('-i', '--index', help= 'Name you want your indexes to have')
     
-    #parser.add_argument('-r', '--path_reads', help='Path to your reads')
-    
     ## option:
     parser.add_argument('-r1', '--path_reads1', help='Path to your reads')
     parser.add_argument('-r2', '--path_reads2', help='Path to your reads')
@@ -70,17 +68,17 @@ def main():
 
     args = parser.parse_args() #interprets the arguments 
     
-    ## 
-    list_of_Reads = get_reads(args.path_reads)
-    
-    
     ## TODO
     hisat2_index()
     
-    ## for each reads
-        hisat2_mapping()
-        ## samtools...
+    ## TODO
+    ## list_reads[args.path_reads1, args.path_reads1]
+    hisat2_mapping()
     
+    ## NEXT LEVEL
+    ##parser.add_argument('-r', '--path_reads', help='Path to your reads')
+    ##list_of_Reads = get_reads(args.path_reads)
+    ## call for each reads hisat2_mapping()
 
 if __name__ == '__main__':
     main()
