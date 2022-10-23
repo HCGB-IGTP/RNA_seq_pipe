@@ -1,6 +1,7 @@
 import os 
 import argparse
 import glob
+from samtools import *
 
 ####INDEXING FUNCTION########################################################################################################################
 
@@ -66,32 +67,6 @@ def hisat2_mapping(path_reference, index, reads_list, output):
             SamToBam(path_results, path_sam)
 
 
-####SAM TO BAM FUNCTION########################################################################################################################
-
-def SamToBam(path_results, path_sam):
-
-    print("Converting SAM to BAM")
-
-    path_bam = path_results + ".bam" #safe bam into results folder
-    sam_to_bam = "samtools view -bS "+ path_sam + " > " + path_bam #samtools sam to bam command
-    print(sam_to_bam)
-    os.system(sam_to_bam)
-    
-    
-    BamToSortedBam(path_results, path_bam)
-
-
-####BAM TO SORTED BAM FUNCTION#################################################################################################################
-
-def BamToSortedBam(path_results, path_bam):
-    
-    print("Converting BAM to Sorted BAM")
-    sorted_bam_name = path_results +".sorted.bam" #safe sorted bam into results folder
-    bam_to_sorted_bam = "samtools sort "+ path_bam + " -o " + sorted_bam_name #samtools bam to sorted bam command
-    print(bam_to_sorted_bam)
-    os.system(bam_to_sorted_bam)
-
-
 ####MAIN FUNCTION##############################################################################################################################
 
 def main():
@@ -105,7 +80,7 @@ def main():
     
     args = parser.parse_args() #interprets the arguments 
     
-    # python3 hisat2.py -p /home/mireia/HISAT2/reference -g chr22.fa -i index -r /home/mireia/HISAT2/reads/reads2 -o /home/mireia/HISAT2/results
+    # python3 hisat2.py -p /home/mireia/HISAT2/reference -g chr22.fa -i index -r /home/mireia/HISAT2/reads/reads2 -o /home/mireia/H-ISAT2/results
     
     ## inputs for other functions (can't be called as args.)
     
