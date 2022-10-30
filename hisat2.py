@@ -80,7 +80,7 @@ def main():
     
     args = parser.parse_args() #interprets the arguments 
     
-    # python3 hisat2.py -p /home/mireia/HISAT2/reference -g chr22.fa -i index -r /home/mireia/HISAT2/reads/reads2 -o /home/mireia/H-ISAT2/results
+    # python3 hisat2.py -p reference -g chr22.fa -i index -r reads/reads2 -o results
     
     ## inputs for other functions (can't be called as args.)
     
@@ -91,7 +91,7 @@ def main():
     output = args.output 
     
   
-    lines = open("reads/reads2").readlines() #read the txt with the information of the reads 
+    lines = open(path_reads).readlines() #read the txt with the information of the reads 
     reads_list = [] #empty list
     for i in lines: #for every sample
         reads_list.append(i.strip().split(';')) #split the different camps
