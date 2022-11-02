@@ -71,7 +71,8 @@ def main():
     parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the outputs will be created', required = "TRUE")
     parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
-    
+    parser.add_argument('-f', '--function', choices = ['Indexing', 'Quantifying'], help = 'You can choose to execute the indexing function, the quantifying function or, by default, both. Possible choices for this argument: Indexing / Quantifying')
+        
     args = parser.parse_args() #interprets the arguments 
     
     # python3 salmon.py -p /home/mireia/IGTP/salmon -g cds.fa.gz -i index -r /home/mireia/IGTP/reads/reads2 -o results
@@ -84,6 +85,7 @@ def main():
     path_reads = args.path_reads
     output = args.output 
     threads = args.threads
+    function = args.function
     
   
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
@@ -98,9 +100,13 @@ def main():
     
     #function calling
     
-    salmon_index(path_reference, reference_genome, index)
-    salmon_quant(path_reference, index, reads_list, output, threads)
-
+    if function == "Indexing": #if in --function they choose indexing just the index function will run
+        salmon_index(path_reference, reference_genome, index)
+    elif function == "Quantifying":#if in --function they choose mapping just the mapping function will run
+        salmon_quant(path_reference, index, reads_list, output, threads)
+    else: #if they don't specify the function, both will run
+        salmon_index(path_reference, reference_genome, index)
+        salmon_quant(path_reference, index, reads_list, output, threads)
 
     
 if __name__ == '__main__':
