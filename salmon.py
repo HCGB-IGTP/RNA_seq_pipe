@@ -27,7 +27,7 @@ def salmon_index(path_reference, reference_genome, index):
         print("Transcriptome is already indexed")
         print("Path to the index:", index_abs_path)
     
-def salmon_quant(path_reference, index, reads_list, output):
+def salmon_quant(path_reference, index, reads_list, output, threads):
     
     path_index = os.path.join(path_reference, index) #path to the genome index
     
@@ -42,7 +42,7 @@ def salmon_quant(path_reference, index, reads_list, output):
             path_results = os.path.join(output, outputs_name) #path to results folder + sample            
             print ("Sample name", outputs_name, "Read forward:", read1, "Read reverse:", read2)
 
-            quant = "salmon quant -i" + path_index + "-l A -1 " + read1 + " -2 " + read2 + " -o " + path_results
+            quant = "salmon quant -i" + path_index + " -p "+ threads + "-l A -1 " + read1 + " -2 " + read2 + " -o " + path_results
             
             print(quant)
             #os.system(quant)
@@ -54,7 +54,7 @@ def salmon_quant(path_reference, index, reads_list, output):
             path_results = os.path.join(output, outputs_name) #path to results folder + sample
             print ("Sample name", outputs_name, "Single read:", single_read)
             
-            quant = "salmon quant -i" + path_index + "-l A -r " + single_read + " -o " + path_results
+            quant = "salmon quant -i" + path_index + " -p "+ threads + "-l A -r " + single_read + " -o " + path_results
             
             print(quant)
             #os.system(quamnt)
@@ -70,6 +70,7 @@ def main():
     parser.add_argument('-i', '--index', help= 'It will create a folder called as your argument', required = "TRUE")
     parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the outputs will be created', required = "TRUE")
+    parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
     
     args = parser.parse_args() #interprets the arguments 
     
@@ -82,6 +83,7 @@ def main():
     index = args.index
     path_reads = args.path_reads
     output = args.output 
+    threads = args.threads
     
   
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
@@ -97,7 +99,7 @@ def main():
     #function calling
     
     salmon_index(path_reference, reference_genome, index)
-    salmon_quant(path_reference, index, reads_list, output)
+    salmon_quant(path_reference, index, reads_list, output, threads)
 
 
     

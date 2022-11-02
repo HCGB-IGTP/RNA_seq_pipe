@@ -24,8 +24,10 @@ def hisat2_index(path_reference, reference_genome, index):
 
 ####MAPPING FUNCTION#########################################################################################################################
 
-def hisat2_mapping(path_reference, index, reads_list, output):
+def hisat2_mapping(path_reference, index, reads_list, output, threads):
         
+    path_index = os.path.join(path_reference, index) #path to the genome index
+    
     #loop to check number of reads
        
     for i in reads_list: #for every list inside reads_list
@@ -39,10 +41,8 @@ def hisat2_mapping(path_reference, index, reads_list, output):
 
             path_results = os.path.join(output, outputs_name) #path to results folder + sample name 
             path_sam = path_results + ".sam" # safe sam in results folder
-            
-            path_index = os.path.join(path_reference, index) #index path
-            
-            mapping = "hisat2 -x " + path_index + " -1 " + read1 + " -2 " + read2 + " -S " + path_sam #hisat2 paired end mapping command  
+                    
+            mapping = "hisat2 -x " + path_index + " -p " + threads + " -1 " + read1 + " -2 " + read2 + " -S " + path_sam #hisat2 paired end mapping command  
             print(mapping)
             os.system(mapping)
             
@@ -56,11 +56,11 @@ def hisat2_mapping(path_reference, index, reads_list, output):
 
             name_sam = outputs_name +".sam" #sample name
 
-            path_index = os.path.join(path_reference, index) #path to the genome index
+            
             path_results = os.path.join(output, outputs_name) #path to results folder + sample name 
             path_sam = path_results + ".sam" # safe sam in results folder
             
-            mapping = "hisat2 -x " + path_index + " -U " + single_read + " -S " + path_sam #hisat2 single end mapping command  
+            mapping = "hisat2 -x " + path_index + " -p "+ threads + " -U " + single_read + " -S " + path_sam #hisat2 single end mapping command  
             
             print(mapping)
             os.system(mapping)
@@ -77,6 +77,7 @@ def main():
     parser.add_argument('-i', '--index', help= 'Name you want your indexes to have', required = "TRUE")
     parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the sam will be created', required = "TRUE")
+    parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
     
     args = parser.parse_args() #interprets the arguments 
     
@@ -88,8 +89,8 @@ def main():
     reference_genome = args.reference_genome
     index = args.index
     path_reads = args.path_reads
-    output = args.output 
-    
+    output = args.output
+    threads = args.threads
   
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
     reads_list = [] #empty list
@@ -104,7 +105,7 @@ def main():
     #function calling
     
     hisat2_index(path_reference, reference_genome, index)
-    hisat2_mapping(path_reference, index, reads_list, output)
+    hisat2_mapping(path_reference, index, reads_list, output, threads)
 
 
     
