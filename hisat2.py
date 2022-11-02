@@ -20,7 +20,7 @@ def hisat2_index(path_reference, reference_genome, index):
         indexing = 'hisat2-build ' + reference_abs_path + ' ' + index_abs_path #bash command 
         print("Path to the index:", index_abs_path) 
         print(indexing)
-        os.system(indexing)
+        #os.system(indexing)
 
 ####MAPPING FUNCTION#########################################################################################################################
 
@@ -44,9 +44,9 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads):
                     
             mapping = "hisat2 -x " + path_index + " -p " + threads + " -1 " + read1 + " -2 " + read2 + " -S " + path_sam #hisat2 paired end mapping command  
             print(mapping)
-            os.system(mapping)
+            #os.system(mapping)
             
-            SamToBam(path_results, path_sam) 
+            #SamToBam(path_results, path_sam) 
             
         else:
             print("Single-end analysis")
@@ -63,8 +63,8 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads):
             mapping = "hisat2 -x " + path_index + " -p "+ threads + " -U " + single_read + " -S " + path_sam #hisat2 single end mapping command  
             
             print(mapping)
-            os.system(mapping)
-            SamToBam(path_results, path_sam)
+            #os.system(mapping)
+            #SamToBam(path_results, path_sam)
 
 
 ####MAIN FUNCTION##############################################################################################################################
@@ -74,10 +74,11 @@ def main():
     parser = argparse.ArgumentParser (description = 'Indexation and mapping using HISAT2') #all arguments are mandatory 
     parser.add_argument('-p', '--path_reference', help = 'Directory where the reference genome is, it will be the index directory too ', required = "TRUE")
     parser.add_argument('-g', '--reference_genome', help = 'Name of the file containing the reference genome', required = "TRUE")
-    parser.add_argument('-i', '--index', help= 'Name you want your indexes to have', required = "TRUE")
+    parser.add_argument('-i', '--index', help= 'Name you want your indexes to have, by default the program check if the index already exists in the path_reference', required = "TRUE")
     parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the sam will be created', required = "TRUE")
     parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
+    parser.add_argument('-f', '--function', choices = ['Indexing', 'Mapping'], help = 'You can choose to execute the indexing function, the mapping function or, by default, both. Possible choices for this argument: Indexing / Mapping / Both')
     
     args = parser.parse_args() #interprets the arguments 
     
@@ -91,6 +92,7 @@ def main():
     path_reads = args.path_reads
     output = args.output
     threads = args.threads
+    function = args.function
   
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
     reads_list = [] #empty list
@@ -104,8 +106,13 @@ def main():
     
     #function calling
     
-    hisat2_index(path_reference, reference_genome, index)
-    hisat2_mapping(path_reference, index, reads_list, output, threads)
+    if function == "Indexing": #if in --function they choose indexing just the index function will run
+        hisat2_index(path_reference, reference_genome, index)
+    elif function == "Mapping":#if in --function they choose mapping just the mapping function will run
+        hisat2_mapping(path_reference, index, reads_list, output, threads)
+    else: #if they don't specify the function, both will run
+        hisat2_index(path_reference, reference_genome, index)
+        hisat2_mapping(path_reference, index, reads_list, output, threads)
 
 
     
