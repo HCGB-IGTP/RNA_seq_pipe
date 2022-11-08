@@ -1,6 +1,6 @@
 import os
 import argparse
-from subprocess import Popen, PIPE
+
 
 
 ### INDEXING FUNCTION ###
@@ -28,26 +28,19 @@ def star_index(path_reference, reference_genome, index, threads, gtf):
     index_abs_path = os.path.join(path_reference, index) #path index
     
     #check if the index exist by searching the folder called as index
-    
-    command = os.path.isdir(index_abs_path) #check if the folder exists 
         
-    if command == True:
-        print("The folder for the index is already created")
-        command = "find " + path_reference + " -name sjdbList.out.tab | wc -l" #the indexing function creates a folder that contains this file (sjdbList.out.tab)
+    if os.path.isdir(index_abs_path) == True: 
     
-        stdout = Popen(command, shell=True, stdout=PIPE).stdout 
-        command_output = stdout.read() #keeps the output in the terminal as a python variable
-        
-        if command_output == "b'0\n'": #the folder was created but the index didn't exist
-            indexing = "STAR --runThreadN " + threads + " --runMode genomeGenerate --genomeDir " + index_abs_path + " --genomeFastaFiles " + reference_abs_path + " --sjdbGTFfile " + gtf  #index the genome
-            print("Indexing the genome")
-            print("Path to the index:", index_abs_path)
-            print(indexing)
-            #os.system(indexing)
-    
+        print("The genome is already indexed")
+       
+        print("Path to the index:", index_abs_path)
+
+
         else:
-            print("Transcriptome is already indexed")
+            indexing = "STAR --runThreadN " + threads + " --runMode genomeGenerate --genomeDir " + index_abs_path + " --genomeFastaFiles " + reference_abs_path + " --sjdbGTFfile " + gtf  #index the
+            print(indexing)
             print("Path to the index:", index_abs_path)
+    
     
     
     #if the folder didn't exist we create it and index the genome
@@ -81,7 +74,7 @@ def star_mapping(path_reference, index, reads_list, output, threads):
                         
             print(mapping)
             #os.system(mapping)
-            #SamToBam(path_results, path_results) 
+            #SamToBam(path_results, path_results, threads, gtf) 
         else:
             print("Single-end analysis")
             single_read = i[1] #single end analysis
@@ -94,7 +87,7 @@ def star_mapping(path_reference, index, reads_list, output, threads):
             
             print(mapping)
             #os.system(mapping)
-            #SamToBam(path_results, path_results) 
+            #SamToBam(path_results, path_results, threads, gtf) 
            
 
 ### MAIN FUNCTION ###  
@@ -105,7 +98,7 @@ def main():
     parser.add_argument('-p', '--path_reference', help = 'Directory where the reference genome is, it will be the index directory too ', required = "TRUE")
     parser.add_argument('-g', '--reference_genome', help = 'Name of the file containing the reference genome', required = "TRUE")
     parser.add_argument('-i', '--index', help= 'It will create a folder called as your argument', required = "TRUE")
-    parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
+    parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMRTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the outputs will be created', required = "TRUE")
     parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
     parser.add_argument('-f', '--function', choices = ['Indexing', 'Mapping'], help = 'You can choose to execute the indexing function, the quantifying function or, by default, both. Possible choices for this argument: Indexing / Quantifying')
@@ -143,10 +136,10 @@ def main():
     if function == "Indexing": #if in --function they choose indexing just the index function will run
         star_index(path_reference, reference_genome, index, threads, gtf)
     elif function == "Quantifying":#if in --function they choose mapping just the mapping function will run
-        star_mapping(path_reference, index, reads_list, output, threads)
+        star_mapping(path_reference, index, reads_list, output, threads, gtf)
     else: #if they don't specify the function, both will run
         star_index(path_reference, reference_genome, index, threads, gtf)
-        star_mapping(path_reference, index, reads_list, output, threads)
+        star_mapping(path_reference, index, reads_list, output, threads, gtf)
 
     
 if __name__ == '__main__':

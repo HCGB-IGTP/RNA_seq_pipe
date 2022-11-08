@@ -24,7 +24,7 @@ def hisat2_index(path_reference, reference_genome, index):
 
 ####MAPPING FUNCTION#########################################################################################################################
 
-def hisat2_mapping(path_reference, index, reads_list, output, threads):
+def hisat2_mapping(path_reference, index, reads_list, output, threads, gtf):
         
     path_index = os.path.join(path_reference, index) #path to the genome index
     
@@ -46,7 +46,7 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads):
             print(mapping)
             #os.system(mapping)
             
-            #SamToBam(path_results, path_sam) 
+            SamToBam(path_results, path_sam, threads, gtf) 
             
         else:
             print("Single-end analysis")
@@ -64,7 +64,7 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads):
             
             print(mapping)
             #os.system(mapping)
-            #SamToBam(path_results, path_sam)
+            SamToBam(path_results, path_sam, threads, gtf)
 
 
 ####MAIN FUNCTION##############################################################################################################################
@@ -79,10 +79,12 @@ def main():
     parser.add_argument('-o', '--output', help= 'Path where the sam will be created', required = "TRUE")
     parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
     parser.add_argument('-f', '--function', choices = ['Indexing', 'Mapping'], help = 'You can choose to execute the indexing function, the mapping function or, by default, both. Possible choices for this argument: Indexing / Mapping / Both')
+    parser.add_argument('-c', '--gtf', help = 'Path to your gtf')
+
     
     args = parser.parse_args() #interprets the arguments 
     
-    # python3 hisat2.py -p reference -g chr22.fa -i index -r reads/reads2 -o results
+    # python3 hisat2.py -p reference -g chr22.fa -i index -r /home/mireia/IGTP/reads/reads2 -o results
     
     ## inputs for other functions (can't be called as args.)
     
@@ -93,6 +95,7 @@ def main():
     output = args.output
     threads = args.threads
     function = args.function
+    gtf = args.gtf
   
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
     reads_list = [] #empty list
@@ -109,10 +112,10 @@ def main():
     if function == "Indexing": #if in --function they choose indexing just the index function will run
         hisat2_index(path_reference, reference_genome, index)
     elif function == "Mapping":#if in --function they choose mapping just the mapping function will run
-        hisat2_mapping(path_reference, index, reads_list, output, threads)
+        hisat2_mapping(path_reference, index, reads_list, output, threads,gtf)
     else: #if they don't specify the function, both will run
         hisat2_index(path_reference, reference_genome, index)
-        hisat2_mapping(path_reference, index, reads_list, output, threads)
+        hisat2_mapping(path_reference, index, reads_list, output, threads,gtf)
 
 
     
