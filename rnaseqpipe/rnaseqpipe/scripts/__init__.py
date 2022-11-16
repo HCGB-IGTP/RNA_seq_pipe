@@ -1,11 +1,12 @@
 
 __all__ = [
-	'hisat2',
-	'Kallisto',
-	'samtools',
-	'featurecounts',
+	#'hisat2',
+	'kallisto',
+	#'samtools',
+	#'featurecounts',
 	'STAR',
-	'salmon'
+	'salmon',
+	'fastqc_caller'
 ]
 
 from rnaseqpipe.scripts import *

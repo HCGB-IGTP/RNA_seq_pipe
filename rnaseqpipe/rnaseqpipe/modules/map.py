@@ -3,15 +3,15 @@ import sys
 import glob
 from rnaseqpipe.scripts import * 
 
-def module_map (path_reference, reference_genome, index, reads_list, output, threads, gtf, kmers, software): #two inputs path reads and software  ??
+def module_map (path_reference, reference_genome, index, path_reads, output, threads, gtf, kmers, software): #two inputs path reads and software  ??
  
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
-        reads_list = [] #empty list
-        for i in lines: #for every sample
-            reads_list.append(i.strip().split(';')) #split the different camps
-            
-            
-        print("Reads in main", reads_list)
+    reads_list = [] #empty list
+    for i in lines: #for every sample
+        reads_list.append(i.strip().split(';')) #split the different camps
+        
+        
+    print("Reads in main", reads_list)
     
     
     choices = ["HISAT2","STAR","Salmon","Kallisto"]

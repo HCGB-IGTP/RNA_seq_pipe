@@ -35,18 +35,10 @@ def star_index(path_reference, reference_genome, index, threads, gtf):
        
         print("Path to the index:", index_abs_path)
 
-
-        else:
-            indexing = "STAR --runThreadN " + threads + " --runMode genomeGenerate --genomeDir " + index_abs_path + " --genomeFastaFiles " + reference_abs_path + " --sjdbGTFfile " + gtf  #index the
-            print(indexing)
-            print("Path to the index:", index_abs_path)
-    
-    
-    
-    #if the folder didn't exist we create it and index the genome
-    
-    else: 
+    else:
+        print("Path to the index:", index_abs_path)
         os.mkdir(index_abs_path) #create directory where the indexes will be stored.
+    
         
     indexing = "STAR --runThreadN " + threads + " --runMode genomeGenerate --genomeDir " + index_abs_path + " --genomeFastaFiles " + reference_abs_path + " --sjdbGTFfile " + gtf
     print(indexing)
