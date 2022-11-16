@@ -1,8 +1,13 @@
+## environment
 RSP/
-build/
-env/
+
+## eclipse
 ../.project
 ../.pydevproject
+
+
+## pip development
+build/
 dist/
 rnaseqpipe.egg-info/
 rnaseqpipe/__pycache__/
