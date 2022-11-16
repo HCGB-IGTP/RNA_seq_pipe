@@ -8,6 +8,7 @@ import argparse
 import os
 import sys
 import rnaseqpipe.modules
+import HCGB.functions.aesthetics_functions as HCGB_aes
 
 ## initiate parser
 parser = argparse.ArgumentParser(prog='rnaseqpipe', description='RNAseq pipeline.'
@@ -221,4 +222,14 @@ subparser_RNAbiotype.set_defaults(func=rnaseqpipe.modules.biotype.run_biotype)
 
 ## space
 subparser_space = subparsers.add_parser(' ', help='')
+
+#####
+args = parser.parse_args()
+if hasattr(args, 'func'):
+    args.func(args)
+else:
+    HCGB_aes.pipeline_header('rnaseqpipe')
+    print("")
+    parser.print_help()
+
 

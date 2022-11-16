@@ -10,6 +10,11 @@
 */build/
 dist/
 rnaseqpipe.egg-info/
-*/rnaseqpipe/__pycache__/
-*/rnaseqpipe/config/__pycache__/
+rnaseqpipe/rnaseqpipe/__pycache__/*
+rnaseqpipe/rnaseqpipe/scripts/__pycache__/*
+rnaseqpipe/rnaseqpipe/modules/__pycache__/*
+rnaseqpipe/rnaseqpipe/config/__pycache__/*
+
+rnaseqpipe/rnaseqpipe/modules/__pycache__/config.cpython-38.pyc
+rnaseqpipe/rnaseqpipe/modules/__pycache__/prep.cpython-38.pyc
 

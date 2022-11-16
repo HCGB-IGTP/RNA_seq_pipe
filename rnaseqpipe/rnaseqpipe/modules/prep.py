@@ -123,8 +123,8 @@ def run_prep(options):
             print (options.rename)
             exit()
             
-        names_retrieved = pd.read_csv(options.rename, sep=',', 
-                                    index_col=0, squeeze=True, 
+        names_retrieved = pd.read_csv(options.rename, sep=',', squeeze=True, 
+                                    index_col=0,  
                                     header=None).to_dict() ## read csv to dictionary
         if (options.debug):
             print (colored('** DEBUG: names_retrieved', 'yellow'))
