@@ -1,0 +1,13 @@
+biopython,1.79
+HCGB,0.5.5
+numpy,1.23.4
+pandas,1.5.1
+patool,1.12
+pip,22.3.1
+python-dateutil,2.8.2
+pytz,2022.6
+setuptools,41.2.0
+six,1.16.0
+termcolor,2.1.0
+wget,3.2
+XlsxWriter,3.0.3
