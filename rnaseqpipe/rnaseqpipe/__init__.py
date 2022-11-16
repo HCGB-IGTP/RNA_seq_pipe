@@ -1,6 +1,7 @@
 __all__ = [
-    'modules'
-    'scripts'
+    'modules',
+    'scripts',
+    'config'
     ]
 
 from rnaseqpipe import *

@@ -1,0 +1,10 @@
+RSP/
+build/
+env/
+../.project
+../.pydevproject
+dist/
+rnaseqpipe.egg-info/
+rnaseqpipe/__pycache__/
+rnaseqpipe/config/__pycache__/
+
