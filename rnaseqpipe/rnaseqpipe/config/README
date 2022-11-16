@@ -1,10 +1,16 @@
 
 We have included folders python/ and software/ with information regarding the requirements and dependencies for configuration of the pipeline.
 
-Save python modules:
+- Save python modules:
 $ pip list --format freeze | sed 's/\=\=/,/' > rnaseqpipe/config/python/python_requirements.csv
+$ awk -F',' '{print $1}' rnaseqpipe/config/python/python_requirements.csv > rnaseqpipe/config/python/python_requirement_summary.txt
 
-Save software dependencies:
+The CSV file is read by python during the config module and the TXT file by setup.py during installation
+
+
+
+
+- Save software dependencies:
 
 
 These files are not included by default in a python package, we have to create a MANIFEST.in file with these information.

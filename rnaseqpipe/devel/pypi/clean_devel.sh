@@ -4,6 +4,6 @@ echo "rm -r build"
 rm -r build
 echo "rm -r dist"
 rm -r dist
-echo "rm -r XICRA.egg-info"
-rm -r XICRA.egg-info
+echo "rm -r rnaseqpipe.egg-info"
+rm -r rnaseqpipe.egg-info
 echo ""

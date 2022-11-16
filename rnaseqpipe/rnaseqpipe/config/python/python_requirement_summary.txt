@@ -1,0 +1,13 @@
+biopython
+HCGB
+numpy
+pandas
+patool
+pip
+python-dateutil
+pytz
+setuptools
+six
+termcolor
+wget
+XlsxWriter
