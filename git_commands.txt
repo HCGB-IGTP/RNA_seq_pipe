@@ -1,3 +1,7 @@
+# to create branch developer
+git branch developer
+git checkout developer
+
 # to push commits from my main branch in my local computer to dev branch in github
 git push origin main:dev
 
@@ -6,3 +10,6 @@ git pull origin dev
 
 # to push commits from my developer branch in my local computer to dev branch in github
 git push --set-upstream origin developer:dev
+
+# to return to commint
+git checkout commit_ID
