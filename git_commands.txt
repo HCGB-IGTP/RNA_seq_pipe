@@ -10,6 +10,7 @@ git pull origin dev
 
 # to push commits from my developer branch in my local computer to dev branch in github
 git push --set-upstream origin developer:dev
+git push origin HEAD:dev
 
 # to return to commint
 git checkout commit_ID
