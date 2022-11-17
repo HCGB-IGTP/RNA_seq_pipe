@@ -1,0 +1,2 @@
+# to push commits from my main branch in local to dev branch in github
+git push origin main:dev
