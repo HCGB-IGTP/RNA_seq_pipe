@@ -1,0 +1,27 @@
+## compiler
+*__pycache__/
+*pyc
+
+## environment
+*/RSP/
+
+## eclipse
+.project
+.pydevproject
+
+
+## pip development
+*/build/
+dist/
+rnaseqpipe.egg-info/
+rnaseqpipe/rnaseqpipe/__pycache__/*
+rnaseqpipe/rnaseqpipe/scripts/__pycache__/
+rnaseqpipe/rnaseqpipe/scripts/__pycache__/*
+rnaseqpipe/rnaseqpipe/modules/__pycache__/*
+rnaseqpipe/rnaseqpipe/config/__pycache__/*
+
+## example and toy dataset
+example/
+toy_dataset/newnames.csv
+toy_dataset/reads/
+toy_dataset/rename.sh

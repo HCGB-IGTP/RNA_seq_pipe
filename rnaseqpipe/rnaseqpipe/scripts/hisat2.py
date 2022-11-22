@@ -75,7 +75,6 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads, gtf):
 
 
 ####MAIN FUNCTION##############################################################################################################################
-
 def main():
     
     parser = argparse.ArgumentParser (description = 'Indexation and mapping using HISAT2') #all arguments are mandatory 
@@ -102,7 +101,15 @@ def main():
     threads = args.threads
     gtf = args.gtf
   
- 
+    #function calling
+  
+    if function == "Indexing": #if in --function they choose indexing just the index function will run
+        hisat2_index(path_reference, reference_genome, index)
+    elif function == "Mapping":#if in --function they choose mapping just the mapping function will run
+        hisat2_mapping(path_reference, index, reads_list, output, threads,gtf)
+    else: #if they don't specify the function, both will run
+        hisat2_index(path_reference, reference_genome, index)
+        hisat2_mapping(path_reference, index, reads_list, output, threads,gtf)
 
 
 

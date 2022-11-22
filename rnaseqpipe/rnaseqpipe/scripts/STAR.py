@@ -46,8 +46,6 @@ def star_index(path_reference, reference_genome, index, threads, gtf):
     
 
     
-
-    
 def star_mapping(path_reference, index, reads_list, output, threads):
     
     path_index = os.path.join(path_reference, index) #path to the genome index

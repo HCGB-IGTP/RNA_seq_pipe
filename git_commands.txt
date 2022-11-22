@@ -1,0 +1,23 @@
+# to create branch developer in local computer
+git branch developer
+git checkout developer
+
+# to push commits from my main branch in my local computer to dev branch in github
+git push origin main:dev
+
+# to pull commints from github dev to 
+git pull origin dev
+
+# to push commits from my developer branch in my local computer to dev branch in github
+git push --set-upstream origin developer:dev
+git push origin HEAD:dev
+
+# to return to commint
+git checkout commit_ID
+
+# when you clone git you don't see all branches: type -a
+git branch
+git branch -a
+
+## change to developer branch (local) == same as in remote or create a new branch
+git checkou dev

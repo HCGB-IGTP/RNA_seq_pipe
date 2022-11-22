@@ -11,7 +11,7 @@ def module_map (path_reference, reference_genome, index, path_reads, output, thr
         reads_list.append(i.strip().split(';')) #split the different camps
 
     print("Reads in main", reads_list)
-      
+
     if software == "HISAT2":
         hisat2_index(path_reference, reference_genome, index)
         hisat2_mapping(path_reference, index, reads_list, output, threads, gtf)

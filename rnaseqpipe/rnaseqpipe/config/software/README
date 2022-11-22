@@ -1,0 +1,9 @@
+add dependencies such as:
+
+trimmomatic
+cutadapt
+fastqc
+multiqc
+star
+salmon
+...
