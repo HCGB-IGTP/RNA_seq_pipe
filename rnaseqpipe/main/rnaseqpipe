@@ -51,9 +51,6 @@ subparser_test = subparsers.add_parser(
 subparser_test.add_argument("--debug", action="store_true", help="Show additional message for debugging purposes.")
 subparser_test.set_defaults(func=rnaseqpipe.modules.test.run_test)
 ##-------------------------------------------------------------##
-
-
-
 ## add fake module blank to add space
 subparser_space = subparsers.add_parser(' ', help='')
 ##-------------------------------------------------------------##
@@ -174,7 +171,7 @@ subparser_map.set_defaults(func=rnaseqpipe.modules.map.module_map)
 
 
 ## space
-subparser_space = subparsers.add_parser(' ', help='')
+#subparser_space = subparsers.add_parser(' ', help='')
 
 ##------------------------------ RNAbiotype ----------------------- ##
 subparser_RNAbiotype = subparsers.add_parser(
@@ -221,7 +218,7 @@ subparser_RNAbiotype.set_defaults(func=rnaseqpipe.modules.biotype.run_biotype)
 ##-------------------------------------------------------------##
 
 ## space
-subparser_space = subparsers.add_parser(' ', help='')
+#subparser_space = subparsers.add_parser(' ', help='')
 
 #####
 args = parser.parse_args()
