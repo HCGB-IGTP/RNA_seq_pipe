@@ -1,0 +1,17 @@
+
+## create environment
+## and activate
+python3 -m venv RSP_env
+source RSP_env/bin/activate
+
+## install dependencies to install developers module
+pip install -r ../rnaseqpipe/devel/pypi/requirements.txt
+
+# move to folder with code, it contains: main/, rnaseqpipe/, devel/, setup.py, README, etc
+cd ../rnaseqpipe/
+
+## install dependencies
+pip install -r rnaseqpipe/config/python/python_requirement_summary.txt 
+
+## create developer installation
+sh devel/pypi/test_module.sh
