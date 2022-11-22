@@ -13,12 +13,12 @@ def kallisto_index(path_reference, reference_genome, index, kmers):
     #check if the index has already been created
     
     if os.path.exists(index_abs_path) == False:
-        indexing = "kallisto index -i " + index_abs_path + path_reference #kmers option can be added
+        indexing = "kallisto index -i " + index_abs_path +" "+ path_reference #kmers option can be added
 
         print("Indexing the transcriptome")
         print("Path to the index:", index_abs_path)
         print(indexing)
-        #os.system(indexing)
+        os.system(indexing)
     
     else:
         print("Transcriptome is already indexed")
@@ -42,13 +42,13 @@ def kallisto_quant(path_reference, index, reads_list, output, threads):
             
             path_results = os.path.join(folder_results, outputs_name)
             
-            print ("Sample name", outputs_name, "Read forward:", read1, "Read reverse:", read2)
+            print ("Sample name", outputs_name, "\nRead forward:", read1, "\nRead reverse:", read2)
 
-            quant =  "kallisto quant -i " + path_index + " -t " + threads + " -o " + path_results + read1 + read2 
+            quant =  "kallisto quant -i " + path_index + " -t " + threads + " -o " + path_results +" "+ read1 + " " + read2 
 
             print(quant)
             
-            #os.system(quant)
+            os.system(quant)
             
         else:
             print("Single-end analysis")
@@ -59,11 +59,11 @@ def kallisto_quant(path_reference, index, reads_list, output, threads):
             
             path_results = os.path.join(folder_results, outputs_name)
             
-            print ("Sample name", outputs_name, "Single read:", single_read)
+            print ("Sample name", outputs_name, "\nSingle read:", single_read)
             
             quant = "kallisto quant -i " + path_index + " -t " + threads + " -o " + path_results + read1             
             print(quant)
-            #os.system(quamnt)
+            os.system(quamnt)
            
 
 ### MAIN FUNCTION ###  
@@ -77,7 +77,6 @@ def main():
     parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the outputs will be created', required = "TRUE")
     parser.add_argument('-t', '--threads', type = int, help = 'Choose how many threads you want to use to execute HISAT2')
-    parser.add_argument('-f', '--function', choices = ['Indexing', 'Quantifying'], help = 'You can choose to execute the indexing function, the quantifying function or, by default, both. Possible choices for this argument: Indexing / Quantifying')
     parser.add_argument ('-k', '--kmers', type = int, help = 'Desired k-mers length when indexing. Default: 31')
         
     args = parser.parse_args() #interprets the arguments 
@@ -92,7 +91,6 @@ def main():
     path_reads = args.path_reads
     output = args.output 
     threads = args.threads
-    function = args.function
     kmers =args.kmers
     
   
@@ -106,16 +104,6 @@ def main():
     print("Reads in main", reads_list)
     
     
-    #function calling
-    
-    if function == "Indexing": #if in --function they choose indexing just the index function will run
-        kallisto_index(path_reference, reference_genome, index, kmers)
-    elif function == "Quantifying":#if in --function they choose mapping just the mapping function will run
-        kallisto_quant(path_reference, index, reads_list, output, threads)
-    else: #if they don't specify the function, both will run
-        kallisto_index(path_reference, reference_genome, index)
-        kallisto_quant(path_reference, index, reads_list, output, threads)
-
     
 if __name__ == '__main__':
     main()

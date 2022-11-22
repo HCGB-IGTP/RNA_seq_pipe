@@ -1,5 +1,6 @@
 import os
 import argparse
+import sys
 from subprocess import Popen, PIPE
 
 ### INDEXING FUNCTION ###
@@ -16,12 +17,15 @@ def salmon_index(path_reference, reference_genome, index):
     reference_abs_path = os.path.join(path_reference, reference_genome) #path reference genome
     index_abs_path = os.path.join(path_reference, index) #path index
     
-    if output == "b'0\n'":
-        indexing = "salmon index -t "+ reference_abs_path + "-i "+ index_abs_path
+    selection = "0".encode()
+   
+    if selection in output:
+        indexing = "salmon index -t "+ reference_abs_path + " -i "+ index_abs_path
         print("Indexing the transcriptome")
         print("Path to the index:", index_abs_path)
         print(indexing)
-        #os.system(indexing)
+        
+        os.system(indexing)
     
     else:
         print("Transcriptome is already indexed")
@@ -43,12 +47,12 @@ def salmon_quant(path_reference, index, reads_list, output, threads):
             os.mkdir(folder_results)
             
             path_results = os.path.join(folder_results, outputs_name)          
-            print ("Sample name", outputs_name, "Read forward:", read1, "Read reverse:", read2)
+            print ("Sample name", outputs_name, "\nRead forward:", read1, "\nRead reverse:", read2)
 
-            quant = "salmon quant -i" + path_index + " -p "+ threads + "-l A -1 " + read1 + " -2 " + read2 + " -o " + path_results
+            quant = "salmon quant -i" + path_index + " -p "+ threads + " -l A -1 " + read1 + " -2 " + read2 + " -o " + path_results
             
             print(quant)
-            #os.system(quant)
+            os.system(quant)
             
         else:
             print("Single-end analysis")
@@ -58,12 +62,12 @@ def salmon_quant(path_reference, index, reads_list, output, threads):
             os.mkdir(folder_results)
             
             path_results = os.path.join(folder_results, outputs_name)
-            print ("Sample name", outputs_name, "Single read:", single_read)
+            print ("Sample name", outputs_name, "\nSingle read:", single_read)
             
-            quant = "salmon quant -i" + path_index + " -p "+ threads + "-l A -r " + single_read + " -o " + path_results
+            quant = "salmon quant -i" + path_index + " -p "+ threads + " -l A -r " + single_read + " -o " + path_results
             
             print(quant)
-            #os.system(quamnt)
+            os.system(quamnt)
            
 
 ### MAIN FUNCTION ###  
@@ -77,7 +81,7 @@ def main():
     parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the outputs will be created', required = "TRUE")
     parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
-    parser.add_argument('-f', '--function', choices = ['Indexing', 'Quantifying'], help = 'You can choose to execute the indexing function, the quantifying function or, by default, both. Possible choices for this argument: Indexing / Quantifying')
+
         
     args = parser.parse_args() #interprets the arguments 
     
@@ -91,8 +95,7 @@ def main():
     path_reads = args.path_reads
     output = args.output 
     threads = args.threads
-    function = args.function
-    
+
   
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
     reads_list = [] #empty list
@@ -104,15 +107,7 @@ def main():
     print("Reads in main", reads_list)
     
     
-    #function calling
-    
-    if function == "Indexing": #if in --function they choose indexing just the index function will run
-        salmon_index(path_reference, reference_genome, index)
-    elif function == "Quantifying":#if in --function they choose mapping just the mapping function will run
-        salmon_quant(path_reference, index, reads_list, output, threads)
-    else: #if they don't specify the function, both will run
-        salmon_index(path_reference, reference_genome, index)
-        salmon_quant(path_reference, index, reads_list, output, threads)
+
 
     
 if __name__ == '__main__':
