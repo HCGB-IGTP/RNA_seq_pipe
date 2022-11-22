@@ -15,6 +15,7 @@
 dist/
 rnaseqpipe.egg-info/
 rnaseqpipe/rnaseqpipe/__pycache__/*
+rnaseqpipe/rnaseqpipe/scripts/__pycache__/
 rnaseqpipe/rnaseqpipe/scripts/__pycache__/*
 rnaseqpipe/rnaseqpipe/modules/__pycache__/*
 rnaseqpipe/rnaseqpipe/config/__pycache__/*

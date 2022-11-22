@@ -7,7 +7,7 @@ from samtools import *
 
 def hisat2_index(path_reference, reference_genome, index):
 
-    check_index = glob.glob(os.path.join(path_reference, "*.ht2")) #save all the files with extension .ht2 into a list 
+    check_index = glob.glob(os.path.join(path_reference, index+"*.ht2")) #save all the files with extension .ht2 into a list 
     
     #check sixe of the list 
     if len(check_index) > 0: #if there is any .ht2 file, we assume the indexation is present 
@@ -20,7 +20,7 @@ def hisat2_index(path_reference, reference_genome, index):
         indexing = 'hisat2-build ' + reference_abs_path + ' ' + index_abs_path #bash command 
         print("Path to the index:", index_abs_path) 
         print(indexing)
-        #os.system(indexing)
+        os.system(indexing)
 
 ####MAPPING FUNCTION#########################################################################################################################
 
@@ -36,7 +36,7 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads, gtf):
             read1 = i[1] #reads forward 
             read2 = i[2] #read reverse
             outputs_name = i[0] #variable that will go through the functions, sample name
-            print ("Sample name", outputs_name, "Read forward:", read1, "Read reverse:", read2)
+            print ("Sample name", outputs_name, "\nRead forward:", read1, "\nRead reverse:", read2)
 
                        
             folder_results = os.path.join(output, outputs_name) #path to results folder + sample
@@ -48,7 +48,7 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads, gtf):
                     
             mapping = "hisat2 -x " + path_index + " -p " + threads + " -1 " + read1 + " -2 " + read2 + " -S " + path_sam #hisat2 paired end mapping command  
             print(mapping)
-            #os.system(mapping)
+            os.system(mapping)
             
             SamToBam(path_results, path_sam, threads, gtf) 
             
@@ -56,7 +56,7 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads, gtf):
             print("Single-end analysis")
             single_read = i[1] #single end analysis
             outputs_name = i[0] #variable that will go through the functions 
-            print ("Sample name", outputs_name, "Single read:", single_read)
+            print ("Sample name", outputs_name, "\nSingle read:", single_read)
 
             name_sam = outputs_name +".sam" #sample name
 
@@ -70,7 +70,7 @@ def hisat2_mapping(path_reference, index, reads_list, output, threads, gtf):
             mapping = "hisat2 -x " + path_index + " -p "+ threads + " -U " + single_read + " -S " + path_sam #hisat2 single end mapping command  
             
             print(mapping)
-            #os.system(mapping)
+            os.system(mapping)
             SamToBam(path_results, path_sam, threads, gtf)
 
 
@@ -84,7 +84,6 @@ def main():
     parser.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMPORTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
     parser.add_argument('-o', '--output', help= 'Path where the sam will be created', required = "TRUE")
     parser.add_argument('-t', '--threads', help = 'Choose how many threads you want to use to execute HISAT2')
-    parser.add_argument('-f', '--function', choices = ['Indexing', 'Mapping'], help = 'You can choose to execute the indexing function, the mapping function or, by default, both. Possible choices for this argument: Indexing / Mapping / Both')
     parser.add_argument('-c', '--gtf', help = 'Path to your gtf')
 
     
@@ -100,11 +99,10 @@ def main():
     path_reads = args.path_reads
     output = args.output
     threads = args.threads
-    function = args.function
     gtf = args.gtf
   
     #function calling
-    
+  
     if function == "Indexing": #if in --function they choose indexing just the index function will run
         hisat2_index(path_reference, reference_genome, index)
     elif function == "Mapping":#if in --function they choose mapping just the mapping function will run
@@ -112,6 +110,7 @@ def main():
     else: #if they don't specify the function, both will run
         hisat2_index(path_reference, reference_genome, index)
         hisat2_mapping(path_reference, index, reads_list, output, threads,gtf)
+
 
 
     
