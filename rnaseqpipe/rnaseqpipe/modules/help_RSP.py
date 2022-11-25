@@ -167,6 +167,40 @@ def print_help_adapters():
     print("Check the XICRA documentation of the module: ", "\033[4m"+ "https://xicra.readthedocs.io/en/latest/user_guide/modules/trimm.html"+"\033[0m")
     return()
 
+################################################
+def print_help_adapters():
+    
+    ## [TODO]
+    print (colored("\n\n ***** TODO: Generate this help message *****\n\n", 'red'))
+    
+    print("RSP includes either cutadapt or trimmomatic as trimming software.")
+    
+    print("## Cutadapt ##")
+    print("...")
+    
+    
+    """Trimmomatic adapters information
+    
+    RSP includes a file :file:`RSP.data.available_Trimmomatic_adapters.fasta` with default sequencing adapters provided by Trimmomatic_ (v0.39).
+    
+    User can provide using the option --adapters different sequencing adapters.
+    
+    .. seealso:: Additional information on Trimmomatic adapters available.
+    
+        - :doc:`Trimmomatic adapters <../../../data/trimmomatic_adapters>` 
+    
+    .. include:: ../../links.inc 
+    """
+    
+    print("## Trimmomatic ##")
+    print()
+    
+    print("RSP includes a file with default sequencing adapters provided by Trimmomatic (v0.39).")
+    print("See additional details in the documentation.\n")
+    
+    print("Users can provide any sequencing adapter of interest using the option --adapters in fasta format file.")
+
+
 ###############
 def help_join_reads():
     return ()

@@ -21,8 +21,14 @@ from rnaseqpipe.scripts import multiQC_report
 from rnaseqpipe.scripts import fastqc_caller
 from rnaseqpipe.config import set_config
 from rnaseqpipe.modules import help_RSP
+from rnaseqpipe import __version__ as pipeline_version
+
 from HCGB import sampleParser
-from HCGB import functions
+import HCGB.functions.info_functions as HCGB_info
+import HCGB.functions.files_functions as HCGB_files
+import HCGB.functions.aesthetics_functions as HCGB_aes
+import HCGB.functions.time_functions as HCGB_time
+import HCGB.functions.main_functions as HCGB_main
 
 ##############################################
 def run_QC(options):
@@ -60,10 +66,10 @@ def run_QC(options):
         options.pair = True
     
     ## set main header
-    functions.aesthetics_functions.pipeline_header('rnaseqpipe')
-    functions.aesthetics_functions.boxymcboxface("Quality check")
+    HCGB_aes.pipeline_header('rnaseqpipe')
+    HCGB_aes.boxymcboxface("Quality check")
     print ("--------- Starting Process ---------")
-    functions.time_functions.print_time()
+    HCGB_time.print_time()
 
     ## absolute path for in & out
     input_dir = os.path.abspath(options.input)
@@ -77,7 +83,7 @@ def run_QC(options):
         options.project = True
         outdir = input_dir        
     
-    functions.aesthetics_functions.boxymcboxface("FASTQC Quality check for samples")
+    HCGB_aes.boxymcboxface("FASTQC Quality check for samples")
     
     ## get files
     print ('+ Getting files from input folder... ')
@@ -86,10 +92,33 @@ def run_QC(options):
     pd_samples_retrieved = sampleParser.files.get_files(options, input_dir, "fastq", ["fastq", "fq", "fastq.gz", "fq.gz"], options.debug)
 
     ## create FASTQC call
-    fastqc(pd_samples_retrieved, outdir, options, "", start_time_total, Debug)
+    name_analysis = ""
+    outdir_dict = fastqc(pd_samples_retrieved, outdir, options, name_analysis, start_time_total, Debug)
+
+    ##
+    multiQC_rep(options, outdir, outdir_dict, name_analysis)
+
+    ################################################
+    ## dump information and parameters
+    ################################################
+    ## samples information dictionary
+    samples_info = {}
+    samples_frame = pd_samples_retrieved.groupby('new_name')
+    for name, grouped in samples_frame:
+        samples_info[name] = grouped['sample'].to_list()
+    
+    info_dir = HCGB_files.create_subfolder("info", outdir)
+    print("+ Dumping information and parameters")
+    runInfo = { "module":"qc", "time":time.time(),
+                "RSP version":pipeline_version,
+                'sample_info': samples_info,
+                "outdir_dict": outdir_dict}
+    
+    HCGB_info.dump_info_run(info_dir, 'qc', options, runInfo, options.debug)
+    ################################################
 
     print ("\n*************** Finish *******************")
-    start_time_partial = functions.time_functions.timestamp(start_time_total)
+    start_time_partial = HCGB_time.timestamp(start_time_total)
 
     print ("+ Exiting qc module.")
     exit()
@@ -112,7 +141,9 @@ def fastqc(pd_samples_retrieved, outdir, options, name_analysis, time_stamp, Deb
     :type Debug
     
     '''
-    
+    ################################################
+    #
+    ################################################
     ## debug message
     if (Debug):
         print (colored("\n**DEBUG: pd_samples_retrieve **", 'yellow'))
@@ -125,7 +156,7 @@ def fastqc(pd_samples_retrieved, outdir, options, name_analysis, time_stamp, Deb
     ## if not project, outdir contains the dir to put output
     ## in this case, in some other cases might not occur    
     if not options.project:
-        functions.create_folder(outdir)
+        HCGB_files.create_folder(outdir)
         
     ## folder name
     if (name_analysis):
@@ -134,8 +165,11 @@ def fastqc(pd_samples_retrieved, outdir, options, name_analysis, time_stamp, Deb
         fold_name = "fastqc"
 
     ## create output dirs for each sample    
-    outdir_dict = functions.files_functions.outdir_project(outdir, options.project, pd_samples_retrieved, fold_name, options.debug)
+    outdir_dict = HCGB_files.outdir_project(outdir, options.project, pd_samples_retrieved, fold_name, options.debug)
     
+    ################################################
+    ## Let's go
+    ################################################
     print ("+ Checking quality for each sample retrieved...")
     start_time_partial = time_stamp
     
@@ -144,14 +178,14 @@ def fastqc(pd_samples_retrieved, outdir, options, name_analysis, time_stamp, Deb
 
     ## optimize threads
     name_list = set(pd_samples_retrieved["name"].tolist())
-    threads_job = functions.main_functions.optimize_threads(options.threads, len(name_list)) ## threads optimization
+    threads_job = HCGB_main.optimize_threads(options.threads, len(name_list)) ## threads optimization
     max_workers_int = int(options.threads/threads_job)
 
     ## debug message
     if (Debug):
-        functions.aesthetics_functions.debug_message("options.threads: " + str(options.threads), "yellow")
-        functions.aesthetics_functions.debug_message("max_workers: " + str(max_workers_int), "yellow")
-        functions.aesthetics_functions.debug_message("threads_job: " + str(threads_job), "yellow")
+        HCGB_aes.debug_message("options.threads: " + str(options.threads), "yellow")
+        HCGB_aes.debug_message("max_workers: " + str(max_workers_int), "yellow")
+        HCGB_aes.debug_message("threads_job: " + str(threads_job), "yellow")
 
     ## send for each sample
     print ("+ Calling fastqc for samples...")    
@@ -172,13 +206,26 @@ def fastqc(pd_samples_retrieved, outdir, options, name_analysis, time_stamp, Deb
     print ("+ FASTQC for samples has finished...")    
     
     ## functions.timestamp
-    start_time_partial = functions.time_functions.timestamp(start_time_partial)
+    start_time_partial = HCGB_time.timestamp(start_time_partial)
 
+    return(outdir_dict)
+
+def multiQC_rep(options, outdir, outdir_dict, name_analysis):
+    ################################################
+    ## Report
+    ################################################
     if (options.skip_report):
         print ("+ No report generation...")
     else:
+    
+        ## folder name
+        if (name_analysis):
+            fold_name = "fastqc_" + name_analysis
+        else:
+            fold_name = "fastqc"
+
         print ("\n+ Generating a report using MultiQC module.")
-        outdir_report = functions.files_functions.create_subfolder("report", outdir)
+        outdir_report = HCGB_files.create_subfolder("report", outdir)
 
         ## get subdirs generated and call multiQC report module
         givenList = []
@@ -194,9 +241,8 @@ def fastqc(pd_samples_retrieved, outdir, options, name_analysis, time_stamp, Deb
             print (my_outdir_list)
             print ("\n")
         
-        fastqc_report = functions.files_functions.create_subfolder("FASTQC", outdir_report)
-        fastqc_final_report = functions.files_functions.create_subfolder(fold_name, fastqc_report)
+        fastqc_report = HCGB_files.create_subfolder("FASTQC", outdir_report)
+        fastqc_final_report = HCGB_files.create_subfolder(fold_name, fastqc_report)
         multiQC_report.multiQC_module_call(my_outdir_list, "FASTQC", fastqc_final_report,"")
         print ('\n+ A summary HTML report of each sample is generated in folder: %s' %fastqc_final_report)
 
-    return()
