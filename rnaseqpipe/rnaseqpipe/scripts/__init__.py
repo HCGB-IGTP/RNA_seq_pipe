@@ -6,7 +6,8 @@ __all__ = [
 	#'featurecounts',
 	'STAR',
 	'salmon',
-	'fastqc_caller'
+	'fastqc_caller',
+	'trimmomatic_call'
 ]
 
 from rnaseqpipe.scripts import *

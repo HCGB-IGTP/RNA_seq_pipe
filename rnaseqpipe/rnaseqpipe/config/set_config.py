@@ -250,7 +250,14 @@ def get_version(prog, path, Debug=False):
 
 	## get information for prog
 	regex = re.compile(dependencies_pd.loc[prog, 'get_version'])
+	
 	args = dependencies_pd.loc[prog, 'version_cmd']
+	
+	if not args:
+		print ("+ Please add details for software: ", prog, " to continue with rnaseqpipe\n\n")
+		exit()
+
+
 	cmd = path + ' ' + args
 
 	## debug messages

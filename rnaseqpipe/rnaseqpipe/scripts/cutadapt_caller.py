@@ -21,44 +21,6 @@ from HCGB import functions
 from rnaseqpipe.config import set_config
 
 #############################################
-def caller(list_reads, sample_folder, name, threads, min_read_len, Debug, adapters, extra):
-    """ Checks if the trimming process have been done previously. If not, it executes it
-    calling cutadapt()    
-    
-    :param list_reads: name of the fastqc files of the sample to be trimmed
-    :param sample_folder: path to the sample folder to store the results
-    :param threads: number of CPUs to use.
-    :param Debug: show additional message for debugging purposes.
-    :param adapters: dictionary with the introduced adapters
-    :param extra: provided extra options for cutadapt trimming process
-
-    :type list_reads: string
-    :type sample_folder: string
-    :type threads: string
-    :type Debug: boolean
-    :type adapters: dictionary
-    :type extra: string
-    
-
-    :returns: None
-    """
-    
-    ## check if previously trimmed and succeeded
-    filename_stamp = sample_folder + '/.success'
-    if os.path.isfile(filename_stamp):
-        stamp = functions.time_functions.read_time_stamp(filename_stamp)
-        print (colored("\tA previous command generated results on: %s [%s -- %s]" %(stamp, name, 'cutadapt'), 'yellow'))
-    else:
-        # Call cutadapt
-        cutadapt_exe = set_config.get_exe('cutadapt')
-        code_returned = cutadapt(cutadapt_exe, list_reads, sample_folder, name, threads, min_read_len, Debug, adapters, extra)
-        if code_returned:
-            functions.time_functions.print_time_stamp(filename_stamp)
-        else:
-            print ('** Sample %s failed...' %name)
-
-
-#############################################
 def cutadapt(cutadapt_exe, reads, path, sample_name, num_threads, min_len_given, Debug, adapters, extra):
     """
     Executes cutadapt sofware for each sample cutting the adapters of each read

@@ -1,3 +1,4 @@
 include rnaseqpipe/config/python/*
 include rnaseqpipe/config/software/*
 include ./VERSION
+include rnaseqpipe/data/
