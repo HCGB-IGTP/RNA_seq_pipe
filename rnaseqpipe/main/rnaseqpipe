@@ -251,3 +251,19 @@ else:
 #subparser_map.add_argument ('-s', '--software', choices = ["HISAT2","STAR","Salmon","Kallisto"], required = "TRUE")
 
 #subparser_map.set_defaults(func=rnaseqpipe.modules.map.module_map) 
+
+##--------------------------------------------##
+
+## ------------  FeatureCounts -----------------##
+#subparser_counts = suparsers.add_parser('featurecounts', help = 'Create a gene counts matrix', description = 'Counts how many reads map to genomic features, such as genes, exon, promoter and genomic bins.')
+
+#subparser_counts.add_argument('--sam', help = 'Path to sam')
+#subparser_counts.add_argument('--path_results', help = 'Path where you want to save your new files')
+#subparser_counts.add_argument('--threads', help = 'How many threads do you want to use during this process')
+#subparser_counts.add_argument('--gtf', help = 'Path to your gtf')
+
+#subparser_counts.set_defaults(func=rnaseqpipe.modules.featurecounts.run_featurecounts)
+
+
+
+
