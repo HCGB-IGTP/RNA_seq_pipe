@@ -1,6 +1,4 @@
 import os
-import sys
-import glob
 from rnaseqpipe.scripts import * 
 
 def module_map (path_reference, reference_genome, index, path_reads, output, threads, gtf, kmers, software): 
