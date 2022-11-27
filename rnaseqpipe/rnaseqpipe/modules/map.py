@@ -3,7 +3,7 @@ import sys
 import glob
 from rnaseqpipe.scripts import * 
 
-def module_map (path_reference, reference_genome, index, path_reads, output, threads, gtf, kmers, software): #two inputs path reads and software  ??
+def module_map (path_reference, reference_genome, index, path_reads, output, threads, gtf, kmers, software): 
  
     lines = open(path_reads).readlines() #read the txt with the information of the reads 
     reads_list = [] #empty list
