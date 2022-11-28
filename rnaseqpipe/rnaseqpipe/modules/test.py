@@ -10,9 +10,15 @@ import shutil
 
 ## Download from git subset2test folder and run sh command
 
+
+## THIS IS AN EXAMPLE OF TEST. NEEDS UPDATE
 def run_test(options):
-    print ("** Downloading folder containing test reads from github")
-    
+
+
+
+    print ("** TO DO: UPDATE TEST")
+    exit()
+ 
     ## Download repo
     str_command = "gitdir https://github.com/HCGB-IGTP/XICRA/tree/master/subset2test/"
     HCGB.functions.system_call_functions.system_call(str_command)
