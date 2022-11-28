@@ -320,8 +320,8 @@ def run_trim(options):
 
     ## create FASTQC calling for trimmed reads
     pd_samples_retrieved_trimmed = sampleParser.files.get_files(options, input_dir, "trim", ['_trim'], options.debug)
-    outdir_dict_fq = qc.fastqc(pd_samples_retrieved_trimmed, outdir, options, "trimmed", start_time_partial, Debug)
-    qc.multiQC_rep(options, outdir, outdir_dict_fq, "trimmed")
+    outdir_dict_fq = qc.fastqc(pd_samples_retrieved_trimmed, outdir, options, "trimmed", start_time_partial, options.debug)
+    qc.multiQC_rep(options, outdir, outdir_dict_fq, "trimmed", options.debug)
 
     ################################################
     ## dump information and parameters

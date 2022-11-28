@@ -96,7 +96,7 @@ def run_QC(options):
     outdir_dict = fastqc(pd_samples_retrieved, outdir, options, name_analysis, start_time_total, Debug)
 
     ##
-    multiQC_rep(options, outdir, outdir_dict, name_analysis)
+    multiQC_rep(options, outdir, outdir_dict, name_analysis, Debug)
 
     ################################################
     ## dump information and parameters
@@ -210,7 +210,7 @@ def fastqc(pd_samples_retrieved, outdir, options, name_analysis, time_stamp, Deb
 
     return(outdir_dict)
 
-def multiQC_rep(options, outdir, outdir_dict, name_analysis):
+def multiQC_rep(options, outdir, outdir_dict, name_analysis, Debug):
     ################################################
     ## Report
     ################################################
