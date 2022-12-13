@@ -1,0 +1,4 @@
+include RSP/config/python/*
+include RSP/config/software/*
+include ./VERSION
+include RSP/data/

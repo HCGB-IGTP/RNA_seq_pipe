@@ -13,12 +13,12 @@
 ## pip development
 */build/
 dist/
-rnaseqpipe.egg-info/
-rnaseqpipe/rnaseqpipe/__pycache__/*
-rnaseqpipe/rnaseqpipe/scripts/__pycache__/
-rnaseqpipe/rnaseqpipe/scripts/__pycache__/*
-rnaseqpipe/rnaseqpipe/modules/__pycache__/*
-rnaseqpipe/rnaseqpipe/config/__pycache__/*
+RSP.egg-info/
+RSP/RSP/__pycache__/*
+RSP/RSP/scripts/__pycache__/
+RSP/RSP/scripts/__pycache__/*
+RSP/RSP/modules/__pycache__/*
+RSP/RSP/config/__pycache__/*
 
 ## example and toy dataset
 example/toyDataset
