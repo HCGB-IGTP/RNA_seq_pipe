@@ -10,4 +10,5 @@ mkdir reads
 mv *gz reads/
 
 ## create new_names
-for i in `dir -l toy_dataset/reads/ | awk '{print $NF}'`; do ori_name=$i; new_name=`echo $i | sed "s/_ERCC//g" | sed "s/UHR_//g" | sed "s/HBR_//" | sed "s/_Build37-ErccTranscripts-chr22//" | sed "s/.read/_R/"`; echo "mv toy_dataset/reads/$i toy_dataset/reads/$new_name"; done | grep 'gz' > toy_dataset/rename.sh
+for i in `dir -l reads/ | awk '{print $NF}'`; do ori_name=$i; new_name=`echo $i | sed "s/_ERCC//g" | sed "s/UHR_//g" | sed "s/HBR_//" | sed "s/_Build37-ErccTranscripts-chr22//" | sed "s/.read/_R/"`; echo "mv reads/$i reads/$new_name"; done | grep 'gz' > rename.sh
+sh rename.sh
