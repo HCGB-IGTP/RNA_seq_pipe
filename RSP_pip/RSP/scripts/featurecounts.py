@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+############################################################
+## Author: Jose F. Sanchez & Mireia Marin                 ##
+## Copyright (C) 2022                                     ##
+## High Content Genomics and Bioinformatics IGPT Unit     ## 
+## Lauro Sumoy Lab, IGTP, Spain                           ##
+############################################################
+
 import os 
 
 def featurecounts (path_results, sorted_bam_name, threads, gtf):

@@ -1,7 +1,21 @@
+#!/usr/bin/env python3
+############################################################
+## Author: Jose F. Sanchez & Mireia Marin                 ##
+## Copyright (C) 2022                                     ##
+## High Content Genomics and Bioinformatics IGPT Unit     ## 
+## Lauro Sumoy Lab, IGTP, Spain                           ##
+############################################################
+
 import os
 import argparse
 import sys
 from subprocess import Popen, PIPE
+
+## import my modules
+from HCGB import functions
+from RSP.config import set_config
+from RSP.scripts import samtools
+
 
 ### INDEXING FUNCTION ###
 

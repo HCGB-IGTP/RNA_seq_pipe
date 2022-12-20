@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 ############################################################
-## Jose F. Sanchez                                        ##
-## Copyright (C) 2019-2020 Lauro Sumoy Lab, IGTP, Spain   ##
+## Author: Jose F. Sanchez 				                  ##
+## Copyright (C) 2022                                     ##
+## High Content Genomics and Bioinformatics IGPT Unit     ## 
+## Lauro Sumoy Lab, IGTP, Spain                           ##
 ############################################################
+
 import time
 import io
 import os

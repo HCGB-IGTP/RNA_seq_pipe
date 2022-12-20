@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-##########################################################
-## Jose F. Sanchez, Marta Lopez & Lauro Sumoy           ##
-## Copyright (C) 2019-2021 Lauro Sumoy Lab, IGTP, Spain ##
-##########################################################
+############################################################
+## Author: Jose F. Sanchez                                ##
+## Copyright (C) 2022                                     ##
+## High Content Genomics and Bioinformatics IGPT Unit     ## 
+## Lauro Sumoy Lab, IGTP, Spain                           ##
+############################################################
 '''
 Calls cutadapt to trim raw reads
 '''

@@ -1,13 +1,22 @@
 
 __all__ = [
-	#'hisat2',
-	'kallisto',
-	#'samtools',
-	#'featurecounts',
+	'fastqc_caller',
+	
+	'multiQC_report',
+	
+	'trimmomatic_call',
+	'cutadapt_caller',
+	
 	'STAR',
 	'salmon',
-	'fastqc_caller',
-	'trimmomatic_call'
+	'hisat2',
+	'kallisto',
+	
+	'RNAbiotype',
+	'samtools',
+	#'featurecounts',
+	
+	'generate_DE'
 ]
 
 from RSP.scripts import *

@@ -1,9 +1,21 @@
+#!/usr/bin/env python3
+############################################################
+## Author: Jose F. Sanchez & Mireia Marin                 ##
+## Copyright (C) 2022                                     ##
+## High Content Genomics and Bioinformatics IGPT Unit     ## 
+## Lauro Sumoy Lab, IGTP, Spain                           ##
+############################################################
+
 import os
 import argparse
 
+## import my modules
+from HCGB import functions
+from RSP.config import set_config
+from RSP.scripts import samtools
+
 
 ### INDEXING FUNCTION ###
-
 def kallisto_index(path_reference, reference_genome, index, kmers):
 
     
