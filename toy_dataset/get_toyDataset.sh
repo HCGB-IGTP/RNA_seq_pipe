@@ -1,6 +1,13 @@
 ## Download data from:
 wget http://genomedata.org/rnaseq-tutorial/HBR_UHR_ERCC_ds_5pc.tar
 
+## get reference
+wget http://genomedata.org/rnaseq-tutorial/fasta/GRCh38/chr22_with_ERCC92.fa
+wget http://genomedata.org/rnaseq-tutorial/annotations/GRCh38/chr22_with_ERCC92.gtf
+
+mkdir reference
+mv chr22* reference/
+
 ## Decompress:
 tar -xvf HBR_UHR_ERCC_ds_5pc.tar 
 
