@@ -183,7 +183,17 @@ def run_map(options):
     ##----------------------------
     map_params_salmon = {}
     if "salmon" in options.soft_name:
-        map_params_salmon = {"test":"123"}
+        print ('+ Setting salmon parameters: ')
+    
+        print ('+ Checking index for salmon: ')
+        ## Prepare or check index
+        abs_path_index =check_index("salmon", path_reference, reference_genome, 
+                    index_ref_name + '_salmon', threads=options.threads, Debug=Debug)
+        
+        # use default if not provided
+        map_params_salmon = {
+            'index':abs_path_index
+        }
         map_params["salmon"] = map_params_salmon
         
     ##----------------------------
@@ -191,8 +201,17 @@ def run_map(options):
     ##----------------------------
     map_params_kallisto = {}
     if "kallisto" in options.soft_name:
+        print ('+ Setting kallisto parameters: ')
+    
+        print ('+ Checking index for kallisto: ')
+        ## Prepare or check index
+        abs_path_index =check_index("kallisto", path_reference, reference_genome, 
+                    index_ref_name + '_kallisto', threads=options.threads, Debug=Debug)
+        
         # use default if not provided
-        map_params_kallisto = {"test":"123"}
+        map_params_kallisto = {
+            'index':abs_path_index
+        }
         map_params["kallisto"] = map_params_kallisto
         
     ##----------------------------
@@ -200,8 +219,17 @@ def run_map(options):
     ##----------------------------
     map_params_star = {}
     if "star" in options.soft_name:
+        print ('+ Setting star parameters: ')
+    
+        print ('+ Checking index for star: ')
+        ## Prepare or check index
+        abs_path_index =check_index("star", path_reference, reference_genome, 
+                    index_ref_name + '_star', threads=options.threads, Debug=Debug)
+        
         # use default if not provided
-        map_params_star = {}
+        map_params_star = {
+            'index':abs_path_index
+        }
         map_params["star"] = map_params_star
 
 
@@ -351,11 +379,9 @@ def module_map (sample_name, path_reference, reference_genome, index_ref_name, r
         filename_stamp = output + '/.success_hisat2'
         if os.path.isfile(filename_stamp):
             stamp = HCGB_time.read_time_stamp(filename_stamp)
-            print (colored("\tA previous command generated results on: %s [%s -- %s]" %(stamp, sample_name, 'map'), 'yellow'))
+            print (colored("\tA previous command generated results on: %s [%s -- %s: %s]" %(stamp, sample_name, 'map', 'hisat2'), 'yellow'))
         else:
-            
-            print(map_params['hisat2'])
-            
+            ## create call to mapping
             code_returned= hisat2.hisat2_mapping(sample_name, map_params['hisat2']['index'], 
                                                  reads_list, output, threads, 
                                                  extra_params, Debug)

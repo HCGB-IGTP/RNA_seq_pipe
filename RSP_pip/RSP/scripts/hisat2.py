@@ -53,51 +53,74 @@ def hisat2_index(path_reference, reference_genome, index, threads, Debug):
 ####MAPPING FUNCTION#########################################################################################################################
 def hisat2_mapping(sample_name, index_path_reference, reads_list, output, threads, extra_params, Debug):
         
+    outputs_name = sample_name #variable that will go through the functions, sample name
+    path_results = os.path.join(output, outputs_name)
+    path_sam = path_results + ".sam" # safe sam in results folder
+    errLog = path_results + ".err" 
+    outLog = path_results + ".log" 
+    outSummary = path_results + ".summary"
+        
     #loop to check number of reads
     hisat2 = set_config.get_exe('hisat2')
        
     if len(reads_list) == 2: #if there are two elements it's a pair-end analysis
         read1 = reads_list[0] #reads forward 
         read2 = reads_list[1] #read reverse
-        outputs_name = sample_name #variable that will go through the functions, sample name
-        print ("Sample name", outputs_name, "\nRead forward:", read1, "\nRead reverse:", read2)
-
-        path_results = os.path.join(output, outputs_name)
-        path_sam = path_results + ".sam" # safe sam in results folder
         
+        if (Debug):
+            print (colored("**DEBUG: Sample name **", 'yellow'))
+            print (outputs_name)
+
+            print (colored("**DEBUG: read1 **", 'yellow'))
+            print (read1)
+            
+            print (colored("**DEBUG: read2 **", 'yellow'))
+            print (read2)
+
         ## hisat call
         #hisat2 paired end mapping command
-        mapping = hisat2 + " -x " + index_path_reference + " -p " + str(threads) + " -1 " + read1 + " -2 " + read2 + " -S " + path_sam  + extra_params  
+        mapping = hisat2 + " -x " + index_path_reference + " -p " + str(threads) 
+        mapping = mapping + " -1 " + read1 + " -2 " + read2 
+        mapping = mapping + " -S " + path_sam
+        mapping = mapping + " --rg-id " + sample_name + ' --rg ' + sample_name
+        mapping = mapping + " --new-summary --summary-file " + outSummary
+        mapping = mapping + extra_params
+        mapping = mapping + " > " +  outLog + " 2> " + errLog
         
         ## system call & return
         code = HCGB_sys.system_call(mapping)
         if (code):
-            return(samtools.SamToBam(path_results, path_sam, threads, Debug))
+            return(samtools.sam_to_bam(path_results, path_sam, threads, Debug))
         else:
             print("Some error occurred during mapping PE reads...") 
         
     else:
         print("Single-end analysis")
-        single_read = i[1] #single end analysis
-        outputs_name = i[0] #variable that will go through the functions 
-        print ("Sample name", outputs_name, "\nSingle read:", single_read)
+        single_read = reads_list[0] #single end analysis
 
-        name_sam = outputs_name +".sam" #sample name
+        if (Debug):
+            print (colored("**DEBUG: Sample name **", 'yellow'))
+            print (outputs_name)
 
-        folder_results = os.path.join(output, outputs_name) #path to results folder + sample
-        os.mkdir(folder_results)
-        
-        path_results = os.path.join(folder_results, outputs_name)            
-        path_sam = path_results + ".sam" # safe sam in results folder
-        
-        mapping = hisat2 + " -x " + index_path_reference + " -p "+ threads + " -U " + single_read + " -S " + path_sam #hisat2 single end mapping command  
+            print (colored("**DEBUG: single_read **", 'yellow'))
+            print (single_read)
+            
+            
+        ## mapping call
+        mapping = hisat2 + " -x " + index_path_reference + " -p " + str(threads) 
+        mapping = mapping + " -U " + single_read
+        mapping = mapping + " -S " + path_sam 
+        mapping = mapping + " --rg-id " + sample_name + ' --rg ' + sample_name
+        mapping = mapping + " --new-summary --summary-file " + outSummary
+        mapping = mapping + extra_params
+        mapping = mapping + " > " +  outLog + " 2> " + errLog
         
         ## system call & return
         code = HCGB_sys.system_call(mapping)
         if (code):
-            return(samtools.SamToBam(path_results, path_sam, threads, Debug))
+            return(samtools.sam_to_bam(path_results, path_sam, threads, Debug))
         else:
-            print("Some error ocurred during mapping SE reads...") 
+            print("Some error occurred during mapping SE reads...") 
             
 
 ####MAIN FUNCTION##############################################################################################################################

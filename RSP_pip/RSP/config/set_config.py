@@ -248,20 +248,25 @@ def get_version(prog, path, Debug=False):
 	## read dependencies information
 	dependencies_pd = extern_progs.read_dependencies()
 
+	## debug messages
+	if (Debug):
+		print(colored("** Debug: dependencies_pd:", 'yellow'))
+		print(dependencies_pd)
+	
 	## get information for prog
 	regex = re.compile(dependencies_pd.loc[prog, 'get_version'])
-	
 	args = dependencies_pd.loc[prog, 'version_cmd']
 	
 	if not args:
 		print ("+ Please add details for software: ", prog, " to continue with RSP\n\n")
 		exit()
 
-
+	##
 	cmd = path + ' ' + args
-
+	
 	## debug messages
 	if (Debug):
+		print(colored("** Debug: cmd:\n%s" %cmd,'yellow'))
 		print(colored("** Debug: regex: %s" %regex,'yellow'))
 		print(colored("** Debug: args: %s" %args, 'yellow'))
 
