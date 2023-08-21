@@ -7,7 +7,7 @@ __all__ = [
 	'trimmomatic_call',
 	'cutadapt_caller',
 	
-	'STAR',
+	'STAR_caller',
 	'salmon',
 	'hisat2',
 	'kallisto',

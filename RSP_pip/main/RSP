@@ -209,12 +209,18 @@ options_group_map.add_argument("--noTrim", action='store_true', help="Use non-tr
 parameters_ref_map = subparser_map.add_argument_group("Reference parameters")
 parameters_ref_map.add_argument("--ref_genome", help="Provide reference genome in fasta format", required= not any(elem in help_options for elem in sys.argv))
 parameters_ref_map.add_argument("--ref_annot", help="Provide reference genome annotation file in GTF format", required= not any(elem in help_options for elem in sys.argv))
+parameters_ref_map.add_argument("--ref_name", help="Provide Index name for the reference genome", required= not any(elem in help_options for elem in sys.argv))ç
+parameters_ref_map.add_argument("--ref_folder", help="Provide folder to store indexing results", required= not any(elem in help_options for elem in sys.argv))ç
 parameters_ref_map.add_argument("--index_folder", help="If provided, save index in this folder instead in ref_genome folder")
-parameters_ref_map.add_argument("--ref_index", help="Provide Index name for the reference genome", required= not any(elem in help_options for elem in sys.argv))
+
 
 
 parameters_soft_map = subparser_map.add_argument_group("Mapping software parameters")
 parameters_soft_map.add_argument("--extra", help="Provide extra options for the software mapping process.")
+parameters_soft_map.add_argument("--extra_index", help="Provide extra options for the software indexing of the genome process.")
+parameters_soft_map.add_argument("--limitGenomeGenerateRAM", type=int, help="Max. limit RAM parameter for STAR mapping. Default 20 Gbytes.", default=20000000000)
+#parameters_soft_map.add_argument("--no_multiMapping",action='store_true', help="Set NO to counting multimapping in the feature count. By default, multimapping reads are allowed. Default: False")
+
 
 info_group_map = subparser_map.add_argument_group("Additional information")
 info_group_map.add_argument("--help_format", action="store_true", help="Show additional help on name format for files.")
@@ -227,12 +233,6 @@ subparser_map.set_defaults(func=RSP.modules.map.run_map)
 
 
 ##--------------------------------------------##
-
-
-
-
-
-
 ## space
 #subparser_space = subparsers.add_parser(' ', help='')
 
