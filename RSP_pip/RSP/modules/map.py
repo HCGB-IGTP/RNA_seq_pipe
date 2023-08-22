@@ -183,7 +183,7 @@ def run_map(options):
         ## Prepare or check index
         abs_path_index =check_index("hisat2", path_reference, reference_genome, 
                     index_ref_name + '_hisat2', threads=options.threads, 
-                    extra_index=options.extra_index, index_folder=options.index_folder, Debug=Debug)
+                    extra_index=options.extra_index, index_folder=options.index_folder, limitGenomeGenerateRAM=options.limitGenomeGenerateRAM, Debug=Debug)
         
         # use default if not provided
         map_params_hisat2 = {
@@ -550,16 +550,10 @@ def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, max_
     
     print ("+ Mapping sequencing reads for each sample retrieved...")
 
-    
-    star_folder = os.path.join(outdir_dict[name], 'star')
-    HCGB_files.create_folder(star_folder)
-
-    outdir_dict[name]['star'] = star_folder
-
     ## send for each sample each time
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         commandsSent = { executor.submit(mapReads_caller_STAR, sorted(cluster["sample"].tolist()), 
-                                         star_folder, name, threads_job, STAR_exe, 
+                                         outdir_dict[name], name, threads_job, STAR_exe, 
                                          genomeDir, options.limitGenomeGenerateRAM, Debug, multimapping): name for name, cluster in sample_frame }
 
         for cmd2 in concurrent.futures.as_completed(commandsSent):
@@ -659,6 +653,10 @@ def mapReads_caller_STAR(files, folder, name, threads, STAR_exe, genomeDir, limi
 
     :returns: None
     """
+
+    folder = os.path.join(folder, 'star')
+    HCGB_files.create_folder(folder)
+
 
     ## check if previously joined and succeeded
     filename_stamp = folder + '/.success'

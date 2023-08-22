@@ -35,7 +35,9 @@ def hisat2_index(path_reference, reference_genome, index, threads, Debug):
     #check sixe of the list 
     if len(check_index) > 0: #if there is any .ht2 file, we assume the indexation is present 
         print("The genome is already indexed. Index files:", check_index)
-
+        index_abs_path = os.path.join(path_reference, index) #path index
+        return(index_abs_path)
+    
     else: #if there is no .ht2 in the path_reference --> build index 
         
         hisat2_build = set_config.get_exe('hisat2-build')
