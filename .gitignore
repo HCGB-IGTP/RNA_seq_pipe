@@ -9,6 +9,8 @@
 .project
 .pydevproject
 
+## visual studio
+.vs
 
 ## pip development
 */build/
