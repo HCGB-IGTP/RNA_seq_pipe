@@ -333,8 +333,8 @@ def run_map(options):
         (start_time_partial, star_results, outdir_dict) = mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, 
                     max_workers_int, threads_job, start_time_partial, outdir, multimapping, map_params["star"]["index"])
     
-    else:
-
+    ## other software
+    if len(options.soft_name>0):
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers_int) as executor:
                 ## sample_name, path_reference, reference_genome, index_name, reads_list, main_output, threads, parameters, software_list, Debug
                 commandsSent = { executor.submit(module_map, 
@@ -358,10 +358,60 @@ def run_map(options):
                         print (cmd2)
                         print('%r generated an exception: %s' % (details, exc))
 
+    ## retrieve results:
+    results_mapping = {}
+    if "star" in options.soft_name:
+        results_mapping['star'] = star_results
+    else:
+        print()
+    
+    ## debug message
+    if (Debug):
+        print (colored("**DEBUG: results_mapping **", 'yellow'))
+        print (results_mapping)
+    
     ## create report for each software
-    #create_mapping_report
+    for name, cluster in sample_frame:
+        for soft in soft_name:
+            outdir_dict_soft[soft][name] = os.path.join(outdir_dict[name], soft)
 
-    print(outdir_dict)
+    ## debug message
+    if (Debug):
+        print (colored("**DEBUG: outdir_dict **", 'yellow'))
+        print (outdir_dict)
+        print (colored("**DEBUG: outdir_dict_soft **", 'yellow'))
+        print (outdir_dict_soft)
+
+    ## Finish mapping
+
+    ################################################
+    ## dump information and parameters
+    ################################################
+    ## samples information dictionary
+    samples_info = {}
+    samples_frame = pd_samples_retrieved.groupby('new_name')
+    for name, grouped in samples_frame:
+        samples_info[name] = grouped['sample'].to_list()
+    
+    info_dir = HCGB_files.create_subfolder("info", outdir)
+    print("+ Dumping information and parameters")
+    runInfo = { "module":"map", "time":time.time(),
+                "RSP version":pipeline_version,
+                'sample_info': samples_info,
+                "outdir_dict": outdir_dict,
+                "outdir_dict_soft": outdir_dict_soft,
+                "map_params": map_params }
+    
+    HCGB_info.dump_info_run(info_dir, 'map', options, runInfo, options.debug)
+    ################################################
+    
+    ################################################
+    print ("\n*************** Finish *******************")
+    start_time_partial = HCGB_time.timestamp(start_time_total)
+
+    print ("\n+ Exiting map module.")
+    exit()
+
 
 
 ###############################################3
@@ -415,6 +465,7 @@ def check_index(soft_name, path_reference, reference_genome, index_ref_name, thr
     if soft_name=="hisat2":
         code_returned= hisat2.hisat2_index(path_reference, 
                                         reference_genome, index_ref_name, threads, Debug)
+        genomeDir=code_returned
         
     if soft_name=="salmon":
         # Fix

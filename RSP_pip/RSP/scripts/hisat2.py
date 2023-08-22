@@ -91,10 +91,8 @@ def hisat2_mapping(sample_name, index_path_reference, reads_list, output, thread
         
         ## system call & return
         code = HCGB_sys.system_call(mapping)
-        if (code):
-            return(samtools.sam_to_bam(path_results, path_sam, threads, Debug))
-        else:
-            print("Some error occurred during mapping PE reads...") 
+        return(code)
+        # samtools.sam_to_bam(path_results, path_sam, threads, Debug)
         
     else:
         print("Single-end analysis")
@@ -119,10 +117,8 @@ def hisat2_mapping(sample_name, index_path_reference, reads_list, output, thread
         
         ## system call & return
         code = HCGB_sys.system_call(mapping)
-        if (code):
-            return(samtools.sam_to_bam(path_results, path_sam, threads, Debug))
-        else:
-            print("Some error occurred during mapping SE reads...") 
+        return(code)
+
             
 
 ####MAIN FUNCTION##############################################################################################################################
