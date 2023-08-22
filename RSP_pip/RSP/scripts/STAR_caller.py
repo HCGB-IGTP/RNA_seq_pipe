@@ -16,6 +16,19 @@ import traceback
 from HCGB.functions import system_call_functions
 from HCGB.functions import files_functions
 
+#############################################################
+def check_index(path_reference, reference_genome, index_ref_name, threads, extra_index, limitGenomeGenerateRAM, Debug):
+
+    check_index_list = glob.glob(os.path.join(path_reference, "*.SA.*")) #save all the files with extension SA into a list 
+    
+    #check sixe of the list 
+    if len(check_index_list) > 0: #if there is any .ht2 file, we assume the indexation is present 
+        print("The genome is already indexed.\nFolder: ", path_reference)
+
+    else: #if there is no SA files, call create_genomeDir for  in the path_reference --> build index 
+	print()
+
+
 ############################################################
 def create_genomeDir(folder, STAR_exe, num_threads, fasta_file, limitGenomeGenerateRAM):
     """Create the STAR_index genome dir 

@@ -21,7 +21,7 @@ RSP/RSP/modules/__pycache__/*
 RSP/RSP/config/__pycache__/*
 
 ## example and toy dataset
-example/toyDataset
+example/
 toy_dataset/newnames.csv
 toy_dataset/reads/
 toy_dataset/reference

@@ -408,7 +408,7 @@ def check_index(soft_name, path_reference, reference_genome, index_ref_name, thr
     
     if os.path.isfile(filename_stamp):
         stamp = HCGB_time.read_time_stamp(filename_stamp)
-        print (colored("\tA previous command generated results on: %s [%s]" %(stamp, 'index ', soft_name), 'yellow')
+        print (colored("\tA previous command generated results on: %s [%s]" %(stamp, soft_name)), 'yellow')
         print("+ Let's check everything is alright...'")
     
     if soft_name=="hisat2":
