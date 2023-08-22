@@ -12,48 +12,47 @@ import sys
 from sys import argv
 import subprocess
 import traceback
+import glob 
 
 from HCGB.functions import system_call_functions
 from HCGB.functions import files_functions
+from RSP.config import set_config
 
 #############################################################
 def check_index(path_reference, reference_genome, index_ref_name, threads, extra_index, limitGenomeGenerateRAM, Debug):
-
-    check_index_list = glob.glob(os.path.join(path_reference, "*.SA.*")) #save all the files with extension SA into a list 
     
-    #check sixe of the list 
-    if len(check_index_list) > 0: #if there is any .ht2 file, we assume the indexation is present 
+    ## check if indexed
+    if files_functions.is_non_zero_file(os.path.join(path_reference, "SA")) and files_functions.is_non_zero_file(os.path.join(path_reference, "genomeParameters.txt")):
         print("The genome is already indexed.\nFolder: ", path_reference)
 
     else: #if there is no SA files, call create_genomeDir for  in the path_reference --> build index 
         STAR_exe = set_config.get_exe("STAR", Debug=Debug)
-        path_reference = create_genomeDir(path_reference, STAR_exe, threads, reference_genome, limitGenomeGenerateRAM)
+        path_reference = create_genomeDir(path_reference, STAR_exe, threads, reference_genome, limitGenomeGenerateRAM, extra_index)
 
     return(path_reference)
 
 ############################################################
-def create_genomeDir(folder, STAR_exe, num_threads, fasta_file, limitGenomeGenerateRAM):
+def create_genomeDir(genomeDir, STAR_exe, num_threads, fasta_file, limitGenomeGenerateRAM, extra_index):
     """Create the STAR_index genome dir 
     
-    :param folder: folder to store the results
+    :param genomeDir: folder to store the results
     :param STAR_exe: Executable path for STAR binary
     :param num_threads: number of threads to do the computation
     :param fasta_file: path to the genome directory
     :param limitGenomeGenerateRAM: limit RAM bytes to be used in the computation
+    :param extra_index: Additional options to include in the index call
 
-    :type folder: string
+    :type genomeDir: string
     :type num_threads: int 
     :type STAR_exe: string
     :type fasta_file: string
     :type limitGenomeGenerateRAM: int
+    :type extra_index: string
 
     :returns: genomeDir
-    """
-    ##
-    genomeDir = files_functions.create_subfolder("STAR_index", folder)
-    
-    cmd_create = "%s --runMode genomeGenerate --limitGenomeGenerateRAM %s --runThreadN %s --genomeDir %s --genomeFastaFiles %s" %(
-        STAR_exe, limitGenomeGenerateRAM, num_threads, genomeDir, fasta_file)
+    """   
+    cmd_create = "%s --runMode genomeGenerate --limitGenomeGenerateRAM %s --runThreadN %s --genomeDir %s --genomeFastaFiles %s %s" %(
+        STAR_exe, limitGenomeGenerateRAM, num_threads, genomeDir, fasta_file, extra_index)
 
     print ('\t+ genomeDir generation for STAR mapping')
     create_code = system_call_functions.system_call(cmd_create, False, True)

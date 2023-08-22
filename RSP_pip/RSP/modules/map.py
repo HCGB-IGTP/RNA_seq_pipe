@@ -530,7 +530,7 @@ def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug,
     ## options
     STAR_exe = set_config.get_exe("STAR", Debug=Debug)
     cwd_folder = os.path.abspath("./")
-    folder=files_functions.create_subfolder('STAR_files', cwd_folder)
+    folder=HCGB_files.create_subfolder('STAR_files', cwd_folder)
 
     ## For many samples it will have to load genome index in memory every time.
     ## For a unique sample it will not matter. Take care genome might stay in memory.
@@ -551,11 +551,11 @@ def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug,
     
     print ("+ Mapping sequencing reads for each sample retrieved...")
 
-    ## send for each sample
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers_int) as executor:
+    ## send for each sample each time
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         commandsSent = { executor.submit(mapReads_caller_STAR, sorted(cluster["sample"].tolist()), 
                                          outdir_dict[name], name, threads_job, STAR_exe, 
-                                         options.genomeDir, options.limitRAM, Debug, multimapping): name for name, cluster in sample_frame }
+                                         genomeDir, options.limitGenomeGenerateRAM, Debug, multimapping): name for name, cluster in sample_frame }
 
         for cmd2 in concurrent.futures.as_completed(commandsSent):
             details = commandsSent[cmd2]
@@ -654,7 +654,7 @@ def mapReads_caller_STAR(files, folder, name, threads, STAR_exe, genomeDir, limi
     ## check if previously joined and succeeded
     filename_stamp = folder + '/.success'
     if os.path.isfile(filename_stamp):
-        stamp = time_functions.read_time_stamp(filename_stamp)
+        stamp = HCGB_time.read_time_stamp(filename_stamp)
         print (colored("\tA previous command generated results on: %s [%s -- %s]" %(stamp, name, 'STAR'), 'yellow'))
     else:
         ##
@@ -673,7 +673,7 @@ def mapReads_caller_STAR(files, folder, name, threads, STAR_exe, genomeDir, limi
         code_returned = STAR_caller.mapReads("LoadAndKeep", files, folder, name, STAR_exe, genomeDir, limitRAM_option, threads, Debug, multimapping)
         
         if (code_returned):
-            time_functions.print_time_stamp(filename_stamp)
+            HCGB_time.print_time_stamp(filename_stamp)
         else:
             print ("+ Mapping sample %s failed..." %name)
     
