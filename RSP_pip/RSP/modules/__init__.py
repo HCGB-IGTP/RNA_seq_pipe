@@ -6,7 +6,7 @@ __all__ = [
 	'qc',
 	'biotype',
 	'help_RSP',
-	'map'
+	'map_module'
 
 ]
 

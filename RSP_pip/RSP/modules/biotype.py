@@ -19,8 +19,8 @@ from termcolor import colored
 
 ## import my modules
 from RSP.config import set_config
-from RSP.modules import help_RSP, map
-from RSP.scripts import RNAbiotype, multiQC_report
+from RSP.modules import help_RSP, map_module
+from RSP.scripts import RNAbiotype, multiQC_report, featurecounts, generate_matrix
 #from RSP.other_tools import tools
 
 from HCGB import sampleParser
@@ -158,23 +158,34 @@ def run_biotype(options):
     ## map Reads
     ##############################################
     
-    ## multimapping:
-    if options.no_multiMapping:
-        multimapping = False
-    else:
-        multimapping = True
-    
-    (start_time_partial, mapping_results) = map.mapReads_module_STAR(options, pd_samples_retrieved, mapping_outdir_dict, 
-                    options.debug, max_workers_int, threads_job, start_time_partial, outdir, multimapping)
+    if not options.map_done:
 
-    ## debug message
-    if (Debug):
-         print (colored("**DEBUG: mapping_results **", 'yellow'))
-         print (mapping_results)
+        print("+ Create mapping of the reads")
     
-    # time stamp
-    start_time_partial = time_functions.timestamp(start_time_partial)
+        ## multimapping:
+        if options.no_multiMapping:
+            multimapping = False
+        else:
+            multimapping = True
     
+        mapping_runInfo = map_module.run_map(options)
+        mapping_results = mapping_runInfo[mapping_results]
+
+        ## debug message
+        if (Debug):
+             print (colored("**DEBUG: mapping_runInfo **", 'yellow'))
+             print (mapping_runInfo)
+             print (colored("**DEBUG: mapping_runInfo[mapping_results] **", 'yellow'))
+             print (mapping_runInfo[mapping_results])
+
+        # time stamp
+        start_time_partial = time_functions.timestamp(start_time_partial)
+    
+    
+    ##############################################
+    ## Biotype analysis
+    ##############################################
+           
     ## for samples
     biotype_outdir_dict = files_functions.outdir_project(outdir, options.project, pd_samples_retrieved, "biotype", options.debug)
     
@@ -188,7 +199,7 @@ def run_biotype(options):
     ##############################################
 
     ## get RNAbiotype information
-    RNAbiotype.RNAbiotype_module_call(mapping_results, biotype_outdir_dict, options.annotation, 
+    RNAbiotype_module_call(mapping_results, biotype_outdir_dict, options.annotation, 
                                       options.debug, max_workers_int, threads_job, multimapping, options.stranded)
 
     # time stamp
@@ -235,7 +246,7 @@ def run_biotype(options):
                 shutil.copy(pdf_plot[0], single_files_biotype)
         
         ## collapse all information
-        all_data = RNAbiotype.generate_matrix(dict_files)
+        all_data = generate_matrix.generate_matrix(dict_files, 'RNAbiotype')
     
         ## print into excel/csv
         print ('+ Table contains: ', len(all_data), ' entries\n')
@@ -273,4 +284,43 @@ def run_biotype(options):
     start_time_partial = time_functions.timestamp(start_time_total)
     print ("\n+ Exiting join module.")
     return()
+
+
+#######################################################################
+def RNAbiotype_module_call(samples_dict, output_dict, gtf_file, Debug, max_workers_int, threads_job, multimapping, stranded):
+	"""
+	Create RNAbiotype analysis for each sample and create summary plots
+	
+	:param samples_dict: Dictionary containing sample IDs as keys and bam files as values
+	:param output_dict: Dictionary containing sample IDs as keys and output folder as values
+	:param gtf_file: Gene annotation file for the reference genome used.
+	:param threads: Number of threads to use.
+	:param Debug: True/False for debugging messages
+	"""
+	
+	## get bin
+	featureCount_exe = set_config.get_exe('featureCounts')
+
+	## send for each sample
+	with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers_int) as executor:
+		commandsSent = { executor.submit(featurecounts.featurecounts_call, output_dict[sample], gtf_file, bam_files, 
+										sample, threads_job, multimapping, stranded, 'RNAbiotype', Debug): sample for sample, bam_files in samples_dict.items() }
+	
+		for cmd2 in concurrent.futures.as_completed(commandsSent):
+			details = commandsSent[cmd2]
+			try:
+				data = cmd2.result()
+			except Exception as exc:
+				print ('***ERROR:')
+				print (cmd2)
+				print('%r generated an exception: %s' % (details, exc))
+
+	##
+	## plot results
+	for name, folder in output_dict.items():
+		RNAbiotypes_stats_file = os.path.join(folder, name + '_RNAbiotype.tsv')
+		if files_functions.is_non_zero_file(RNAbiotypes_stats_file):
+			RNAbiotype.pie_plot_results(RNAbiotypes_stats_file, name, folder, Debug)
+			
+	return()
 

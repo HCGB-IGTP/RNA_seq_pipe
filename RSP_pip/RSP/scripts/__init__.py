@@ -14,9 +14,9 @@ __all__ = [
 	
 	'RNAbiotype',
 	'samtools',
-	#'featurecounts',
+	'featurecounts',
 	
-	'generate_DE'
+	'generate_matrix'
 ]
 
 from RSP.scripts import *

@@ -400,7 +400,8 @@ def run_map(options):
 				'sample_info': samples_info,
 				"outdir_dict": outdir_dict,
 				"outdir_dict_soft": outdir_dict_soft,
-				"map_params": map_params }
+				"map_params": map_params,
+				"mapping_results": results_mapping}
 	
 	HCGB_info.dump_info_run(info_dir, 'map', options, runInfo, options.debug)
 	################################################
@@ -410,8 +411,8 @@ def run_map(options):
 	start_time_partial = HCGB_time.timestamp(start_time_total)
 
 	print ("\n+ Exiting map module.")
-	exit()
-
+	
+	return(runInfo)
 
 
 ###############################################3
