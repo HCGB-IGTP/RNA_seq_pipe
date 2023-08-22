@@ -364,15 +364,15 @@ def run_map(options):
 	## create report for each software
 	outdir_dict_soft = {}
 	for soft in options.soft_name:
-	   outdir_dict_soft[soft]={} 
-	   for name, cluster in sample_frame:
+		outdir_dict_soft[soft]={} 
+		for name, cluster in sample_frame:
 			outdir_dict_soft[soft][name] = os.path.join(outdir_dict[name], soft)
 
 		## Create mapping report    
 		if (options.skip_report):
 			print ("+ No report generation...")
 		else:
-			create_mapping_report(main_outdir=outdir, soft, outdir_dict_soft[soft])
+			create_mapping_report(main_outdir=outdir, soft_name=soft, outdir_dict_given=outdir_dict_soft[soft])
 
 
 	## debug message
@@ -586,7 +586,7 @@ def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, max_
 	
 	## remove previous reference genome from memory
 	print ("+ Remove genome in memory from previous call... (if any)")
-	#STAR_caller.remove_Genome(STAR_exe, options.genomeDir, folder, options.threads)
+	STAR_caller.remove_Genome(STAR_exe, genomeDir, folder, options.threads)
 	
 	## load reference genome
 	STAR_caller.load_Genome(folder, STAR_exe, genomeDir, options.threads)
