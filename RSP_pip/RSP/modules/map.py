@@ -455,7 +455,7 @@ def check_index(soft_name, path_reference, reference_genome, index_ref_name, thr
     
     if os.path.isfile(filename_stamp):
         stamp = HCGB_time.read_time_stamp(filename_stamp)
-        print (colored("\tA previous command generated results on: %s [%s]" %(stamp, soft_name), 'yellow'))
+        print (colored("\tA previous command generated results on: %s [%s]" %(stamp, soft_name)), 'yellow')
         print("+ Let's check everything is alright...'")
     
     if soft_name=="hisat2":
@@ -464,11 +464,13 @@ def check_index(soft_name, path_reference, reference_genome, index_ref_name, thr
         genomeDir=code_returned
         
     if soft_name=="salmon":
+        print("")
         # Fix
         #salmon_index(path_reference, reference_genome, index)
         
     if soft_name=="kallisto":
-        # Fix
+        print("")
+	# Fix
         #kallisto_index(path_reference, reference_genome, index, kmers)
         
     if soft_name=="star":
@@ -510,7 +512,7 @@ def module_map (sample_name, path_reference, reference_genome, index_ref_name, r
             code_returned= hisat2.hisat2_mapping(sample_name, map_params['hisat2']['index'], 
                                                  reads_list, output, threads, 
                                                  extra_params, Debug)
-            if code_returned:
+            if (code_returned=="OK"):
                 HCGB_time.print_time_stamp(filename_stamp)
             else:
                 print ('** Sample %s failed...' %sample_name)
@@ -722,7 +724,7 @@ def mapReads_caller_STAR(files, folder, name, threads, STAR_exe, genomeDir, limi
         # Call STAR
         code_returned = STAR_caller.mapReads("LoadAndKeep", files, folder, name, STAR_exe, genomeDir, limitRAM_option, threads, Debug, multimapping)
         
-        if (code_returned):
+        if (code_returned=="OK"):
             HCGB_time.print_time_stamp(filename_stamp)
         else:
             print ("+ Mapping sample %s failed..." %name)

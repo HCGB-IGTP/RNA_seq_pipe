@@ -48,9 +48,8 @@ def hisat2_index(path_reference, reference_genome, index, threads, Debug):
         print("Path to the index:", index_abs_path) 
 
         ## system call & return
-        code = HCGB_sys.system_call(indexing)
-        if (code):    
-            return(index_abs_path)
+        code = HCGB_sys.system_call(indexing, False, True)
+        return(index_abs_path)
 
 ####MAPPING FUNCTION#########################################################################################################################
 def hisat2_mapping(sample_name, index_path_reference, reads_list, output, threads, extra_params, Debug):
@@ -90,7 +89,7 @@ def hisat2_mapping(sample_name, index_path_reference, reads_list, output, thread
         mapping = mapping + " > " +  outLog + " 2> " + errLog
         
         ## system call & return
-        code = HCGB_sys.system_call(mapping)
+        code = HCGB_sys.system_call(mapping, False, True)
         return(code)
         # samtools.sam_to_bam(path_results, path_sam, threads, Debug)
         
@@ -116,7 +115,7 @@ def hisat2_mapping(sample_name, index_path_reference, reads_list, output, thread
         mapping = mapping + " > " +  outLog + " 2> " + errLog
         
         ## system call & return
-        code = HCGB_sys.system_call(mapping)
+        code = HCGB_sys.system_call(mapping, False, True)
         return(code)
 
             
