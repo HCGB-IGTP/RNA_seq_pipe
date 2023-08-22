@@ -98,8 +98,6 @@ def run_map(options):
         multimapping = False
     else:
         multimapping = True
-    
-
 
     ################################################
     ## Let's go
@@ -457,7 +455,7 @@ def check_index(soft_name, path_reference, reference_genome, index_ref_name, thr
     
     if os.path.isfile(filename_stamp):
         stamp = HCGB_time.read_time_stamp(filename_stamp)
-        print (colored("\tA previous command generated results on: %s [%s]" %(stamp, soft_name)), 'yellow')
+        print (colored("\tA previous command generated results on: %s [%s]" %(stamp, soft_name), 'yellow'))
         print("+ Let's check everything is alright...'")
     
     if soft_name=="hisat2":
@@ -468,14 +466,10 @@ def check_index(soft_name, path_reference, reference_genome, index_ref_name, thr
     if soft_name=="salmon":
         # Fix
         #salmon_index(path_reference, reference_genome, index)
-        code_returned= hisat2.hisat2_index(path_reference, 
-                                        reference_genome, index_ref_name, threads, Debug)
         
     if soft_name=="kallisto":
         # Fix
         #kallisto_index(path_reference, reference_genome, index, kmers)
-        code_returned= hisat2.hisat2_index(path_reference, 
-                                        reference_genome, index_ref_name, threads, Debug)
         
     if soft_name=="star":
         code_returned= STAR_caller.check_index(path_reference, 

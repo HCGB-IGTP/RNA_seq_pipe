@@ -52,7 +52,10 @@ def create_genomeDir(genomeDir, STAR_exe, num_threads, fasta_file, limitGenomeGe
     :returns: genomeDir
     """   
     cmd_create = "%s --runMode genomeGenerate --limitGenomeGenerateRAM %s --runThreadN %s --genomeDir %s --genomeFastaFiles %s %s" %(
-        STAR_exe, limitGenomeGenerateRAM, num_threads, genomeDir, fasta_file, extra_index)
+        STAR_exe, limitGenomeGenerateRAM, num_threads, genomeDir, fasta_file)
+
+    if extra_index:
+        cmd_create = cmd_create + extra_index    
 
     print ('\t+ genomeDir generation for STAR mapping')
     create_code = system_call_functions.system_call(cmd_create, False, True)
