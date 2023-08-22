@@ -325,16 +325,12 @@ def run_map(options):
 
     ## if star, it is better to load genome, map all samples and then remove genome from memory
     if "star" in options.soft_name:
-        print(options.soft_name)    
-        options.soft_name = options.soft_name.remove("star")
-        print(options.soft_name)
-
         ## Create call for STAR only
         (start_time_partial, star_results, outdir_dict) = mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, 
                     max_workers_int, threads_job, start_time_partial, outdir, multimapping, map_params["star"]["index"])
     
     ## other software
-    if len(options.soft_name>0):
+    if len(options.soft_name)>0:
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers_int) as executor:
                 ## sample_name, path_reference, reference_genome, index_name, reads_list, main_output, threads, parameters, software_list, Debug
                 commandsSent = { executor.submit(module_map, 
@@ -371,8 +367,10 @@ def run_map(options):
         print (results_mapping)
     
     ## create report for each software
-    for name, cluster in sample_frame:
-        for soft in soft_name:
+    outdir_dict_soft = {}
+    for soft in options.soft_name:
+       outdir_dict_soft[soft]={} 
+       for name, cluster in sample_frame:
             outdir_dict_soft[soft][name] = os.path.join(outdir_dict[name], soft)
 
     ## debug message
