@@ -330,13 +330,9 @@ def run_map(options):
         print(options.soft_name)
 
         ## Create call for STAR only
-        mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, 
+        (start_time_partial, star_results, outdir_dict) = mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, 
                     max_workers_int, threads_job, start_time_partial, outdir, multimapping, map_params["star"]["index"])
     
-
-
-
-
     else:
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers_int) as executor:
@@ -361,6 +357,11 @@ def run_map(options):
                         print ('***ERROR:')
                         print (cmd2)
                         print('%r generated an exception: %s' % (details, exc))
+
+    ## create report for each software
+    #create_mapping_report
+
+    print(outdir_dict)
 
 
 ###############################################3
@@ -441,8 +442,7 @@ def check_index(soft_name, path_reference, reference_genome, index_ref_name, thr
 
 
 ###############################################
-def module_map (sample_name, path_reference, reference_genome, index_ref_name, reads_list, main_output, 
-                threads, map_params, software_list, Debug): 
+def module_map (sample_name, path_reference, reference_genome, index_ref_name, reads_list, main_output, threads, map_params, software_list, Debug): 
     
     ##-------------------------------------
     ## send commands for each software
@@ -491,8 +491,7 @@ def module_map (sample_name, path_reference, reference_genome, index_ref_name, r
 
 
 #########################################
-def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, 
-                    max_workers_int, threads_job, start_time_partial, outdir, multimapping, genomeDir):
+def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, max_workers_int, threads_job, start_time_partial, outdir, multimapping, genomeDir):
     
     """Organizes the mapping of the samples, executed in parallel.
 
@@ -551,10 +550,16 @@ def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug,
     
     print ("+ Mapping sequencing reads for each sample retrieved...")
 
+    
+    star_folder = os.path.join(outdir_dict[name], 'star')
+    HCGB_files.create_folder(star_folder)
+
+    outdir_dict[name]['star'] = star_folder
+
     ## send for each sample each time
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
         commandsSent = { executor.submit(mapReads_caller_STAR, sorted(cluster["sample"].tolist()), 
-                                         outdir_dict[name], name, threads_job, STAR_exe, 
+                                         star_folder, name, threads_job, STAR_exe, 
                                          genomeDir, options.limitGenomeGenerateRAM, Debug, multimapping): name for name, cluster in sample_frame }
 
         for cmd2 in concurrent.futures.as_completed(commandsSent):
@@ -592,20 +597,26 @@ def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug,
     results_SampleParser = results_SampleParser.set_index('name')
     mapping_results = results_SampleParser.to_dict()['sample']
 
+    return(start_time_partial, mapping_results, outdir_dict)
+
+
+#################################
+def create_mapping_report(main_outdir, soft_name, outdir_dict_given):
+    
     ## Create mapping report    
     if (options.skip_report):
         print ("+ No report generation...")
     else:
         print ("\n+ Generating a report using MultiQC module.")
-        outdir_report = HCGB_files.create_subfolder("report", outdir)
-        map_outdir_report = HCGB_files.create_subfolder("map", outdir)
+        outdir_report = HCGB_files.create_subfolder("report", main_outdir)
+        map_outdir_report = HCGB_files.create_subfolder("map", outdir_report)
 
         ## get subdirs generated and call multiQC report module
         givenList = []
         print ("+ Detail information for each sample could be identified in separate folders:")
         
         ## call multiQC report module
-        givenList = [ v for v in outdir_dict.values() ]
+        givenList = [ v for v in outdir_dict_given.values() ]
         my_outdir_list = set(givenList)
 
         ## debug message
@@ -614,11 +625,9 @@ def mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug,
             print (my_outdir_list)
             print ("\n")
         
-        map_report = HCGB_files.create_subfolder("STAR", map_outdir_report)
-        multiQC_report.multiQC_module_call(my_outdir_list, "STAR", map_report,"-dd 2")
-        print ('\n+ A summary HTML report of each sample is generated in folder: %s' %map_report)
-
-    return(start_time_partial, mapping_results)
+        map_report = HCGB_files.create_subfolder(soft_name, map_outdir_report)
+        multiQC_report.multiQC_module_call(my_outdir_list, soft_name, map_report,"-dd 3")
+        print ('\n+ A summary HTML report of each sample for software %s is generated in folder: %s' %(soft_name, map_report))
 
 #################################
 def mapReads_caller_STAR(files, folder, name, threads, STAR_exe, genomeDir, limitRAM_option, Debug, multimapping):
