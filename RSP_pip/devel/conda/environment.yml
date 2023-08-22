@@ -166,4 +166,3 @@ dependencies:
     - webencodings==0.5.1
     - wget==3.2
     - xlsxwriter==3.0.3
-prefix: /imppc/labs/lslab/jsanchez/conda_package/miniconda3/envs/RSP

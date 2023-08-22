@@ -26,8 +26,10 @@ def check_index(path_reference, reference_genome, index_ref_name, threads, extra
         print("The genome is already indexed.\nFolder: ", path_reference)
 
     else: #if there is no SA files, call create_genomeDir for  in the path_reference --> build index 
-	print()
+        STAR_exe = set_config.get_exe("STAR", Debug=Debug)
+        path_reference = create_genomeDir(path_reference, STAR_exe, threads, reference_genome, limitGenomeGenerateRAM)
 
+    return(path_reference)
 
 ############################################################
 def create_genomeDir(folder, STAR_exe, num_threads, fasta_file, limitGenomeGenerateRAM):
