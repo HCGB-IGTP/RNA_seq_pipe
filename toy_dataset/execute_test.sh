@@ -26,3 +26,17 @@ echo "..."
 echo ""
 RSP trim -s trimmomatic -i RSP_analysis/ | tee logs/RSP_analysis.trim.log
 echo ""
+
+echo "# ------------------------------ #"
+echo "RSP map -s star -i RSP_analysis/ --ref_genome toy_dataset/reference/chr22_with_ERCC92.fa --ref_folder index_folder"
+echo "..."
+echo ""
+RSP map -s star -i RSP_analysis/ --ref_genome toy_dataset/reference/chr22_with_ERCC92.fa --ref_folder index_folder | tee logs/RSP_analysis.map.log
+echo ""
+
+echo "# ------------------------------ #"
+echo "RSP counts -s star -i RSP_analysis/ --ref_annot toy_dataset/reference/chr22_with_ERCC92.gtf"
+echo "..."
+echo ""
+RSP counts -s star -i RSP_analysis/ --ref_annot toy_dataset/reference/chr22_with_ERCC92.gtf | tee logs/RSP_analysis.counts.log
+echo ""
