@@ -124,14 +124,6 @@ def run_map(options):
 	else:
 		print("Fasta reference genome provided does not exist")
 		exit()
-	# Check genome annotation file provided exists
-	if HCGB_files.is_non_zero_file(options.ref_annot):
-		options.ref_annot = os.path.abspath(options.ref_annot)
-		print ('+ Reference genome annotation provided:... ')
-		print('\t' + options.ref_annot)
-	else:
-		print("Reference genome annotation provided does not exist")
-		exit()
 
 	## if desired, provide a shared folder with pre-computed indexed files
 	if (options.index_folder):

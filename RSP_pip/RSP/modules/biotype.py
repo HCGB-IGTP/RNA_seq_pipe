@@ -180,7 +180,9 @@ def run_biotype(options):
 
         # time stamp
         start_time_partial = time_functions.timestamp(start_time_partial)
-    
+     
+    else:
+        print("Get mapping results:")    
     
     ##############################################
     ## Biotype analysis
@@ -284,7 +286,6 @@ def run_biotype(options):
     start_time_partial = time_functions.timestamp(start_time_total)
     print ("\n+ Exiting join module.")
     return()
-
 
 #######################################################################
 def RNAbiotype_module_call(samples_dict, output_dict, gtf_file, Debug, max_workers_int, threads_job, multimapping, stranded):
