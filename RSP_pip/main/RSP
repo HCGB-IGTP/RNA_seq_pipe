@@ -182,7 +182,8 @@ subparser_map = subparsers.add_parser(
     help='Read mapping analysis.',
     description='This module generates a mapping of the reads to a reference genome.',
 )
-#subparser_map.add_argument('-p', '--path_reference', help = 'Directory where the reference genome is, it will be the index directory too ', required = "TRUE")
+
+#----------------------
 #subparser_map.add_argument('-g', '--reference_genome', help = 'Name of the file containing the reference genome', required = "TRUE")
 #subparser_map.add_argument('-i', '--index', help= 'It will create a folder called as your argument', required = "TRUE")
 #subparser_map.add_argument('-r', '--path_reads', help='Path to your txt with the format: $PATH/sample_name;$PATH/read1;$PATH/read or $PATH/sample_name;$PATH/read1. IT IS VERY IMRTANT TO MANTAIN THE ORDER OF THE ELEMENTS AND THAT THEY ARE SEPARATED BY ;', required = "TRUE")
@@ -192,6 +193,7 @@ subparser_map = subparsers.add_parser(
 #subparser_map.add_argument ('-b', '--gtf', help = 'Path to the file with annotated transcripts in the standard GTF format.')
 #subparser_map.add_argument ('-k', '--kmers', type = int, help = 'Desired k-mers length when indexing. Default: 31')
 #subparser_map.add_argument ('-s', '--software', choices = ["HISAT2","STAR","Salmon","Kallisto"], required = "TRUE")
+#----------------------
 
 in_out_group_map = subparser_map.add_argument_group("Input/Output")
 in_out_group_map.add_argument("-i", "--input", help="Folder containing a project or reads, according to the mode selected. Files could be .fastq/.fq/ or fastq.gz/.fq.gz. See --help_format for additional details.", required= not any(elem in help_options for elem in sys.argv))
@@ -232,7 +234,7 @@ info_group_map.add_argument("--help_project", action="store_true", help="Show ad
 info_group_map.add_argument("--help_multiqc", action="store_true", help="Show additional help on the multiQC module.")
 info_group_map.add_argument("--debug", action="store_true", help="Show additional message for debugging purposes.")
 
-subparser_map.set_defaults(func=RSP.modules.map.run_map)
+subparser_map.set_defaults(func=RSP.modules.map_module.run_map)
 ##-------------------------------------------------------------##
 
 
