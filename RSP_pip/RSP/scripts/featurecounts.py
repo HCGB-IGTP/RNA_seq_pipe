@@ -6,11 +6,19 @@
 ## Lauro Sumoy Lab, IGTP, Spain                           ##
 ############################################################
 
+import sys
+import os
+from RSP.config import set_config
+from HCGB.functions import fasta_functions, time_functions
+from HCGB.functions import aesthetics_functions, system_call_functions
+from HCGB.functions import files_functions, main_functions
+
 #####################
 def featurecounts_call(path, gtf_file, bam_file, name, threads, allow_multimap, stranded, option_featureCount, Debug):
-	
+		
 	## option_featureCount: RNAbiotype, Gene count
-
+	threads = str(threads)
+	stranded = str(stranded)
 
 	featureCount_exe = set_config.get_exe('featureCounts')
 
@@ -41,20 +49,19 @@ def featurecounts_call(path, gtf_file, bam_file, name, threads, allow_multimap, 
 				print ("out_file: " + out_file)
 				print ("logfile: " + logfile)
 				print("option_featureCount: " + option_featureCount)
-		
+
 			## Mode
 			if (option_featureCount=="RNAbiotype"):
-			
 				## Allow multimapping
 				if allow_multimap:
 					cmd_featureCount = ('%s -s %s -M -O -T %s -p -t exon -g transcript_biotype -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, threads, gtf_file, out_file, bam_file, logfile)
+						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
 					)
 				else:
 					cmd_featureCount = ('%s -s %s --largestOverlap -T %s -p -t exon -g transcript_biotype -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, threads, gtf_file, out_file, bam_file, logfile)
+						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
 					)
-			
+
 			elif (option_featureCount=="Gene Count"):
 				## "-t exon":   Specify feature type in GTF annotation.
 				##                              `exon' by default. Features used for read
@@ -64,21 +71,21 @@ def featurecounts_call(path, gtf_file, bam_file, name, threads, allow_multimap, 
 				##                      default. Meta-features used for read counting will be
 				##                      extracted from annotation using the provided value.
 
-				## inicialmente se hizo con gene_name pero tras ver resultados entendemos que es mejor a nivel de gene_id ya que será IDs unicos
-				
+				## inicialmente se hizo con gene_name pero tras ver resultados entendemos que es mejor a nivel de gene_id ya que seran IDs unicos
+
 				## Allow multimapping
 				if allow_multimap:
 					cmd_featureCount = ('%s -p -t exon -g gene_id -s %s -M -O -T %s -p -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, threads, gtf_file, out_file, bam_file, logfile)
+						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
 						## -T threads
 						## -s stranded
 						## -M multimapping
 					)
 				else:
 					cmd_featureCount = ('%s -p -t exon -g gene_id -s %s --largestOverlap -T %s -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, threads, gtf_file, out_file, bam_file, logfile)
+						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
 					)
-		
+
 			## send command for feature count
 			## system call
 			cmd_featureCount_code = system_call_functions.system_call(cmd_featureCount, False, True)
@@ -309,9 +316,27 @@ def parse_featureCount(out_file, path, name, bam_file, Debug):
 	return(out_tsv_file_name, RNA_biotypes_file_name)
 
 ###########################
-def get_counts_gene():
+def get_counts_gene(path, gtf_file, bam_file, name, threads, allow_multimap, stranded, Debug):
 
 	out_file = featurecounts_call(path, gtf_file, bam_file, name, threads, allow_multimap, stranded, 'Gene Count', Debug)
 	return(out_file)
 
 	
+
+def main():
+
+	## control if options provided or help
+	if len(sys.argv) > 3:
+		print ("+ Get counts")
+	else:
+		print ("*** ATTENTION: Provide the following arguments:***\npython featurecounts.py bam gtf folder2save_results name")
+		exit()
+	
+	get_counts_gene(sys.argv[3], sys.argv[2], sys.argv[1], sys.argv[4], "2", True, "0", True)
+	
+
+
+
+
+if __name__ == '__main__':
+    main()

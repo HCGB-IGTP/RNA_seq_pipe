@@ -160,14 +160,22 @@ def run_count(options):
 		"kallisto": "x"
 	}
 
+
+	## 
+	sample_frame = pd_samples_retrieved.groupby(["new_name"])
+	map_outdir_dict = HCGB_files.outdir_project(outdir, options.project, pd_samples_retrieved, "map", options.debug)
+
+
 	## for each software create dictionary with files
 	for soft_name2check in options.soft_name:
 		bam_file_dict[soft_name2check] = {}
 		for name, cluster in sample_frame:
-			bam_file_dict[soft_name2check][name] = os.path.join(outdir_dict[name], soft_name2check, files_dict[soft_name2check])
+			bam_file_dict[soft_name2check][name] = os.path.join(map_outdir_dict[name], soft_name2check, files_dict[soft_name2check])
 
-	print(bam_file_dict)
-	exit()
+	## debug message
+	if (Debug):
+		print (colored("**DEBUG: bam_file_dict **", 'yellow'))
+		print (bam_file_dict)
 
 	## generate output folder, if necessary
 	print("\n+ Create output folder(s):")
@@ -175,7 +183,7 @@ def run_count(options):
 		files_functions.create_folder(outdir)
 
 	## for samples
-	counts_outdir_dict = files_functions.outdir_project(outdir, options.project, pd_samples_retrieved, "counts", options.debug)
+	counts_outdir_dict = HCGB_files.outdir_project(outdir, options.project, pd_samples_retrieved, "counts", options.debug)
 	
 	## debug message
 	if (Debug):
@@ -183,11 +191,11 @@ def run_count(options):
 		print (counts_outdir_dict)
 
 	# time stamp
-	start_time_partial = time_functions.timestamp(start_time_total)
+	start_time_partial = HCGB_time.timestamp(start_time_total)
 
 	## optimize threads
 	name_list = set(pd_samples_retrieved["new_name"].tolist())
-	threads_job = main_functions.optimize_threads(options.threads, len(name_list)) ## threads optimization
+	threads_job = HCGB_main.optimize_threads(options.threads, len(name_list)) ## threads optimization
 	max_workers_int = int(options.threads/threads_job)
 	
 	## debug message
@@ -202,19 +210,19 @@ def run_count(options):
 	print ("+ Counting reads for each sample and software specified...")    
 	
 	# Group dataframe by sample name
-	sample_frame = pd_samples_retrieved.groupby(["new_name"])
+	#sample_frame = pd_samples_retrieved.groupby(["new_name"])
 	
 	for soft_name2check in options.soft_name:
 
 		with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers_int) as executor:
 				## sample_name, path_reference, reference_genome, index_name, reads_list, main_output, threads, parameters, software_list, Debug
 				commandsSent = { executor.submit(gene_count_caller, 
-													outdir_dict[name], ## main_output,
+													counts_outdir_dict[name], ## main_output,
 													options.ref_annot, ## reference_genome annotation,
 													bam_file_dict[soft_name2check][name], ## bam file to use,
 													name,
 													threads_job, ## threads 
-													options.multimapping,
+													multimapping,
 													options.stranded,
 													soft_name2check, ## software list
 													Debug): name for name, cluster in sample_frame }
@@ -235,7 +243,7 @@ def run_count(options):
 	for soft in options.soft_name:
 		results_dict_soft[soft]={} 
 		for name, cluster in sample_frame:
-			results_dict_soft[soft][name] = os.path.join(outdir_dict[name], soft, "featureCount.out")
+			results_dict_soft[soft][name] = os.path.join(counts_outdir_dict[name], soft, "featureCount.out")
 
 		## Create count report    
 		if (options.skip_report):
@@ -245,7 +253,7 @@ def run_count(options):
 			#create_mapping_report(main_outdir=outdir, soft_name=soft, outdir_dict_given=results_dict_soft[soft])
 
 		## for each software create count matrix
-		all_counts_matrix_soft = generate_matrix.generate_matrix(results_dict_soft[soft], "Gene")
+		all_counts_matrix_soft = generate_matrix.generate_matrix(results_dict_soft[soft], "Geneid")
 		
 		## Dump count files into report folder
 		print("Save file all_counts_matrix_soft")
@@ -289,7 +297,16 @@ def run_count(options):
 
 ################################################################################## 
 def gene_count_caller(output_folder, gtf_file, bam_file, name2use, threads, multimapping, stranded, soft_name2use, Debug):
-	
+
+	print ("output_folder: " + output_folder)
+	print ("gtf_file: " + gtf_file)
+	print ("bam_file: " + bam_file)
+	print ("name2use: " + name2use)
+	print ("threads: " + str(threads))
+	print ("multimapping: " + str(multimapping))
+	print ("stranded: " + str(stranded))
+	print ("soft_name2use: " + soft_name2use)
+
 	## create subfolder for this mapping software
 	output_folder = HCGB_files.create_subfolder(soft_name2use, output_folder)
 
@@ -300,7 +317,7 @@ def gene_count_caller(output_folder, gtf_file, bam_file, name2use, threads, mult
 		print (colored("\tA previous command generated results on: %s [%s -- %s: %s]" %(stamp, sample_name, 'count', 'featureCounts'), 'yellow'))
 	else:
 		## create call to mapping
-		code_returned = featurecounts.get_counts_gene(output_folder, gtf_file, bam_file, name2use, threads, multimapping, stranded, 'Gene Count', Debug)
+		code_returned = featurecounts.get_counts_gene(output_folder, gtf_file, bam_file, name2use, str(threads), multimapping, str(stranded), Debug)
 
 		if os.path.isfile(code_returned):
 			HCGB_time.print_time_stamp(filename_stamp)

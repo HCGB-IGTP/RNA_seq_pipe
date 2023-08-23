@@ -173,7 +173,7 @@ subparser_trimm.set_defaults(func=RSP.modules.trim.run_trim)
 
 ##-------------------------------------------------------------##
 ## add fake module blank to add space
-subparser_space = subparsers.add_parser(' ', help='')
+#subparser_space = subparsers.add_parser(' ', help='')
 ##-------------------------------------------------------------##
 
 ##------------------------------ map  ----------------------- ##
@@ -288,6 +288,8 @@ in_out_group_count.add_argument("--ex_sample", help="File containing a list of s
 in_out_group_count.add_argument("--detached", action="store_true", help="Isolated mode. --input is a folder containing fastq reads. Provide a unique path o several using --batch option")
 in_out_group_count.add_argument("--include_lane", action="store_true", help="Include the lane tag (*L00X*) in the sample identification. See --help_format for additional details [Default OFF]")
 in_out_group_count.add_argument("--include_all", action="store_true", help="Include all file name characters in the sample identification. See --help_format for additional details [Default OFF]")
+in_out_group_count.add_argument("--noTrim", action='store_true', help="Use non-trimmed reads [or not containing '_trim' in the name].")
+
 
 options_group_count = subparser_count.add_argument_group("Options")
 options_group_count.add_argument("--skip_report", action="store_true", help="Do not report statistics using MultiQC report module [Default OFF]. See details in --help_multiqc")
@@ -303,6 +305,7 @@ parameters_soft_count = subparser_count.add_argument_group("Couting software par
 parameters_soft_count.add_argument("--extra", help="Provide extra options for the software count process.")
 parameters_soft_count.add_argument("--limitGenomeGenerateRAM", type=int, help="Max. limit RAM parameter for STAR mapping. Default 20 Gbytes.", default=20000000000)
 parameters_soft_count.add_argument("--no_multiMapping",action='store_true', help="Set NO to counting multimapping in the feature count. By default, multimapping reads are allowed. Default: False")
+parameters_soft_count.add_argument("--stranded", type=int, help="Select if reads are stranded [1], reverse stranded [2] or non-stranded [0], Default: 0.", default=0)
 
 
 info_group_count = subparser_count.add_argument_group("Additional information")

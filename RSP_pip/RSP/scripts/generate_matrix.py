@@ -1,4 +1,5 @@
 
+import pandas as pd
 
 
 ############################################################
@@ -14,6 +15,7 @@ def generate_matrix(dict_files, index_name):
 	all_data = pd.DataFrame()
 	for key,values in dict_files.items():
 		print ('+ Reading information from sample: ', key)	
+		## check if file values exists
 		data = pd.read_csv(values, sep='\t', header=None, names=[index_name, key])
 		
 		## skip if file is empty
