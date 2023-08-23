@@ -15,6 +15,8 @@ from io import open
 import shutil
 import concurrent.futures
 from termcolor import colored
+import pandas as pd
+import csv
 
 ## import my modules
 from RSP.scripts import multiQC_report, featurecounts, generate_matrix
@@ -48,7 +50,7 @@ def run_count(options):
 	start_time_total = time.time()
 
 	##################################
-	### show help messages if desired    
+	### show help messages if desired
 	##################################
 	if (options.help_format):
 		## help_format option
@@ -240,27 +242,31 @@ def run_count(options):
 	## create report/summary for each software
 	results_dict_soft = {}
 	results_count={}
-	outdir_report = HCGB_files.create_subfolder("report", main_outdir)
+	outdir_report = HCGB_files.create_subfolder("report", outdir)
 	module_outdir_report = HCGB_files.create_subfolder("counts", outdir_report)
+	results_fold_dict_soft = {}
 
 	for soft in options.soft_name:
 		results_dict_soft[soft]={} 
+		results_fold_dict_soft[soft]={}
 		for name, cluster in sample_frame:
 			results_dict_soft[soft][name] = os.path.join(counts_outdir_dict[name], soft, "featureCount.out")
+			results_fold_dict_soft[soft][name] = os.path.join(counts_outdir_dict[name], soft)
 
-		## Create count report    
+
+		# Create count report    
 		if (options.skip_report):
 			print ("+ No report generation...")
 		else:
 			multiQC_report.create_module_report(main_outdir=outdir, soft_name=soft, 
-				outdir_dict_given=results_dict_soft[soft], module_given="counts", 
+				outdir_dict_given=results_fold_dict_soft[soft], module_given="counts", 
 				options2multiqc="-dd 3")
 
 		## for each software create count matrix
 		all_counts_matrix_soft = generate_matrix.generate_matrix(results_dict_soft[soft], "Geneid")
 		
 		## dump data in folder provided
-		csv_outfile = os.path.join(module_outdir_report, 'counts_RNAseq_' + soft_name + '.csv')
+		csv_outfile = os.path.join(module_outdir_report, 'counts_RNAseq_' + soft + '.csv')
 		all_counts_matrix_soft.to_csv(csv_outfile, quoting=csv.QUOTE_NONNUMERIC)
 		
 		## Dump count files into report folder
@@ -289,7 +295,7 @@ def run_count(options):
 	runInfo = { "module":"count", "time":time.time(),
 				"RSP version":pipeline_version,
 				'sample_info': samples_info,
-				"outdir_dict": outdir_dict,
+				"outdir_dict": counts_outdir_dict,
 				"results_count": results_count}
 	
 	HCGB_info.dump_info_run(info_dir, 'count', options, runInfo, options.debug)

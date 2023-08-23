@@ -78,11 +78,11 @@ def multiQC_call(pathFile, name, folder, option):
     return(functions.system_call_functions.system_call(cmd))
 
 #################################
-def create_module_report(main_outdir, soft_name, outdir_dict_given, module_given, options2multiqc):
+def create_module_report(main_outdir, soft_name, outdir_dict_given, module_given, options2multiqc, Debug=False):
 	
 	print ("\n+ Generating a report using MultiQC module for results obtained with software: " + soft_name)
-	outdir_report = HCGB_files.create_subfolder("report", main_outdir)
-	module_outdir_report = HCGB_files.create_subfolder(module_given, outdir_report)
+	outdir_report = functions.files_functions.create_subfolder("report", main_outdir)
+	module_outdir_report = functions.files_functions.create_subfolder(module_given, outdir_report)
 
 	## get subdirs generated and call multiQC report module
 	givenList = []
@@ -98,7 +98,7 @@ def create_module_report(main_outdir, soft_name, outdir_dict_given, module_given
 		print (my_outdir_list)
 		print ("\n")
 		
-	module_given_report = HCGB_files.create_subfolder(soft_name, module_outdir_report)
+	module_given_report = functions.files_functions.create_subfolder(soft_name, module_outdir_report)
 	multiQC_module_call(my_outdir_list, soft_name, module_given_report, options2multiqc)
 	print ('\n+ A summary HTML report of each sample for software %s is generated in folder: %s' %(soft_name, module_given_report))
 
