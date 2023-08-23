@@ -7,6 +7,7 @@
 ############################################################
 
 import os
+import sys
 ## import my modules
 from HCGB import functions
 from RSP.config import set_config
@@ -75,15 +76,19 @@ def sam_to_sorted_bam(path_results, path_sam, threads, Debug):
 def main():
 
     ## control if options provided or help
-    if len(sys.argv) == 3:
-        print ("+ Convert SAM to sorted BAM")
+    if len(sys.argv) > 3:
+        print ("+ Convert SAM-BAM files")
     else:
-        print ("*** ATTENTION: Provide the following arguments:***\npython samtools.py path_results path_sam num_threads")
-        exit()        
+        print ("*** ATTENTION: Provide the following arguments:***\npython samtools.py path_results path_sam num_threads [sam2bam|sam2sortedbam|bam2sortedbam]")
+        exit()
 
-    sorted_bam = sam_to_sorted_bam(sys.argv[1], sys.argv[2], sys.argv[3], True)
 
-    print(sorted_bam)
+    if sys.argv[4]=="sam2sortedbam":
+        sorted_bam = sam_to_sorted_bam(sys.argv[1], sys.argv[2], sys.argv[3], True)
+
+    if sys.argv[4]=="bam2sortedbam":
+        bam_to_sorted_bam(sys.argv[1], sys.argv[2], sys.argv[3], True)
+
 
 
 if __name__ == '__main__':

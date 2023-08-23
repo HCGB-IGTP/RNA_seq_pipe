@@ -322,7 +322,7 @@ def run_map(options):
 	if "star" in options.soft_name:
 		## Create call for STAR only
 		(start_time_partial, star_results, outdir_dict) = mapReads_module_STAR(options, pd_samples_retrieved, outdir_dict, Debug, 
-					max_workers_int, threads_job, start_time_partial, outdir, multimapping, map_params["star"]["index"])
+					max_workers_int, options.threads, start_time_partial, outdir, multimapping, map_params["star"]["index"])
 	
 	## other software
 	if len(options.soft_name)>0:
