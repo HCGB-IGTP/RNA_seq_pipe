@@ -236,9 +236,8 @@ def run_map(options):
 			'index':abs_path_index
 		}
 		map_params["star"] = map_params_star
-
-
-   ## debug message
+	
+	## debug message
 	if (Debug):
 		print (colored("**DEBUG: map_params **", 'yellow'))
 		print(map_params)
@@ -364,8 +363,7 @@ def run_map(options):
 		if (options.skip_report):
 			print ("+ No report generation...")
 		else:
-			create_mapping_report(main_outdir=outdir, soft_name=soft, outdir_dict_given=outdir_dict_soft[soft])
-
+			multiQC_report.create_module_report(main_outdir=outdir, soft_name=soft, outdir_dict_given=outdir_dict_soft[soft], module_given="map", options2multiqc="-dd 3")
 
 	## debug message
 	if (Debug):

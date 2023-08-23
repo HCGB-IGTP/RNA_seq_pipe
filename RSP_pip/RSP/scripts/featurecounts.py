@@ -29,72 +29,65 @@ def featurecounts_call(path, gtf_file, bam_file, name, threads, allow_multimap, 
 	out_file = os.path.join(path, 'featureCount.out')
 	logfile = os.path.join(path, name + '_RNAbiotype.log')
 
-	filename_stamp_all = path + '/.success_all'
-	if os.path.isfile(filename_stamp_all):
-		stamp = time_functions.read_time_stamp(filename_stamp_all)
-		print (colored("\tA previous command generated results on: %s [%s -- %s]" %(stamp, name, option_featureCount), 'yellow'))
-		return()
-
+	filename_stamp_featureCounts = path + '/.success_featureCounts'
+	if os.path.isfile(filename_stamp_featureCounts):
+		stamp = time_functions.read_time_stamp(filename_stamp_featureCounts)
+		print (colored("\tA previous command generated results on: %s [%s -- %s]" %(stamp, name, 'featureCounts'), 'yellow'))
 	else:
-		filename_stamp_featureCounts = path + '/.success_featureCounts'
-		if os.path.isfile(filename_stamp_featureCounts):
-			stamp = time_functions.read_time_stamp(filename_stamp_featureCounts)
-			print (colored("\tA previous command generated results on: %s [%s -- %s]" %(stamp, name, 'featureCounts'), 'yellow'))
-		else:
             
-			## debugging messages
-			if Debug:
-				print ("** DEBUG:")
-				print ("featureCounts system call for sample: " + name)
-				print ("out_file: " + out_file)
-				print ("logfile: " + logfile)
-				print("option_featureCount: " + option_featureCount)
+		## debugging messages
+		if Debug:
+			print ("** DEBUG:")
+			print ("featureCounts system call for sample: " + name)
+			print ("out_file: " + out_file)
+			print ("logfile: " + logfile)
+			print("option_featureCount: " + option_featureCount)
 
-			## Mode
-			if (option_featureCount=="RNAbiotype"):
-				## Allow multimapping
-				if allow_multimap:
-					cmd_featureCount = ('%s -s %s -M -O -T %s -p -t exon -g transcript_biotype -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
-					)
-				else:
-					cmd_featureCount = ('%s -s %s --largestOverlap -T %s -p -t exon -g transcript_biotype -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
-					)
+		## Mode
+		if (option_featureCount=="RNAbiotype"):
+			## Allow multimapping
+			if allow_multimap:
+				cmd_featureCount = ('%s -s %s -M -O -T %s -p -t exon -g transcript_biotype -a %s -o %s %s 2> %s' %(
+					featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
+				)
+			else:
+				cmd_featureCount = ('%s -s %s --largestOverlap -T %s -p -t exon -g transcript_biotype -a %s -o %s %s 2> %s' %(
+					featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
+				)
 
-			elif (option_featureCount=="Gene Count"):
-				## "-t exon":   Specify feature type in GTF annotation.
-				##                              `exon' by default. Features used for read
-				##                              counting will be extracted from annotation using the provided value.
+		elif (option_featureCount=="Gene Count"):
+			## "-t exon":   Specify feature type in GTF annotation.
+			##                              `exon' by default. Features used for read
+			##                              counting will be extracted from annotation using the provided value.
 
-				## "-g gene_name":      Specify attribute type in GTF annotation. `gene_id' by
-				##                      default. Meta-features used for read counting will be
-				##                      extracted from annotation using the provided value.
+			## "-g gene_name":      Specify attribute type in GTF annotation. `gene_id' by
+			##                      default. Meta-features used for read counting will be
+			##                      extracted from annotation using the provided value.
 
-				## inicialmente se hizo con gene_name pero tras ver resultados entendemos que es mejor a nivel de gene_id ya que seran IDs unicos
+			## inicialmente se hizo con gene_name pero tras ver resultados entendemos que es mejor a nivel de gene_id ya que seran IDs unicos
 
-				## Allow multimapping
-				if allow_multimap:
-					cmd_featureCount = ('%s -p -t exon -g gene_id -s %s -M -O -T %s -p -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
-						## -T threads
-						## -s stranded
-						## -M multimapping
-					)
-				else:
-					cmd_featureCount = ('%s -p -t exon -g gene_id -s %s --largestOverlap -T %s -a %s -o %s %s 2> %s' %(
-						featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
-					)
+			## Allow multimapping
+			if allow_multimap:
+				cmd_featureCount = ('%s -p -t exon -g gene_id -s %s -M -O -T %s -p -a %s -o %s %s 2> %s' %(
+					featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
+					## -T threads
+					## -s stranded
+					## -M multimapping
+				)
+			else:
+				cmd_featureCount = ('%s -p -t exon -g gene_id -s %s --largestOverlap -T %s -a %s -o %s %s 2> %s' %(
+					featureCount_exe, stranded, str(threads), gtf_file, out_file, bam_file, logfile)
+				)
 
-			## send command for feature count
-			## system call
-			cmd_featureCount_code = system_call_functions.system_call(cmd_featureCount, False, True)
-			if not cmd_featureCount_code:
-				print("** ERROR: featureCount failed for sample " + name)
-				exit()
+		## send command for feature count
+		## system call
+		cmd_featureCount_code = system_call_functions.system_call(cmd_featureCount, False, True)
+		if not cmd_featureCount_code:
+			print("** ERROR: featureCount failed for sample " + name)
+			exit()
 				
-			## print time stamp
-			time_functions.print_time_stamp(filename_stamp_featureCounts)
+		## print time stamp
+		time_functions.print_time_stamp(filename_stamp_featureCounts)
 		
 	return (out_file)
 

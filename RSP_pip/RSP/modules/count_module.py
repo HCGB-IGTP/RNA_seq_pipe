@@ -240,6 +240,9 @@ def run_count(options):
 	## create report/summary for each software
 	results_dict_soft = {}
 	results_count={}
+	outdir_report = HCGB_files.create_subfolder("report", main_outdir)
+	module_outdir_report = HCGB_files.create_subfolder("counts", outdir_report)
+
 	for soft in options.soft_name:
 		results_dict_soft[soft]={} 
 		for name, cluster in sample_frame:
@@ -249,14 +252,19 @@ def run_count(options):
 		if (options.skip_report):
 			print ("+ No report generation...")
 		else:
-			print("TODO!")
-			#create_mapping_report(main_outdir=outdir, soft_name=soft, outdir_dict_given=results_dict_soft[soft])
+			multiQC_report.create_module_report(main_outdir=outdir, soft_name=soft, 
+				outdir_dict_given=results_dict_soft[soft], module_given="counts", 
+				options2multiqc="-dd 3")
 
 		## for each software create count matrix
 		all_counts_matrix_soft = generate_matrix.generate_matrix(results_dict_soft[soft], "Geneid")
 		
+		## dump data in folder provided
+		csv_outfile = os.path.join(module_outdir_report, 'counts_RNAseq_' + soft_name + '.csv')
+		all_counts_matrix_soft.to_csv(csv_outfile, quoting=csv.QUOTE_NONNUMERIC)
+		
 		## Dump count files into report folder
-		print("Save file all_counts_matrix_soft")
+		print("Save counts in file: " + csv_outfile)
 	
 
 	## debug message
@@ -298,28 +306,17 @@ def run_count(options):
 ################################################################################## 
 def gene_count_caller(output_folder, gtf_file, bam_file, name2use, threads, multimapping, stranded, soft_name2use, Debug):
 
-	print ("output_folder: " + output_folder)
-	print ("gtf_file: " + gtf_file)
-	print ("bam_file: " + bam_file)
-	print ("name2use: " + name2use)
-	print ("threads: " + str(threads))
-	print ("multimapping: " + str(multimapping))
-	print ("stranded: " + str(stranded))
-	print ("soft_name2use: " + soft_name2use)
-
 	## create subfolder for this mapping software
 	output_folder = HCGB_files.create_subfolder(soft_name2use, output_folder)
 
 	## check if previously counted and succeeded
-	filename_stamp = output_folder + '/.success_featurecounts'
+	filename_stamp = output_folder + '/.success_featureCounts'
 	if os.path.isfile(filename_stamp):
 		stamp = HCGB_time.read_time_stamp(filename_stamp)
-		print (colored("\tA previous command generated results on: %s [%s -- %s: %s]" %(stamp, sample_name, 'count', 'featureCounts'), 'yellow'))
+		print (colored("\tA previous command generated results on: %s [%s -- %s: %s]" %(stamp, name2use, 'count', 'featureCounts'), 'yellow'))
 	else:
 		## create call to mapping
 		code_returned = featurecounts.get_counts_gene(output_folder, gtf_file, bam_file, name2use, str(threads), multimapping, str(stranded), Debug)
 
-		if os.path.isfile(code_returned):
-			HCGB_time.print_time_stamp(filename_stamp)
-		else:
-			print ('** Sample %s failed...' %sample_name)
+		if not os.path.isfile(code_returned):
+			print ('** Sample %s failed...' %name2use)
