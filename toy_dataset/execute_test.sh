@@ -28,15 +28,15 @@ RSP trim -s trimmomatic -i RSP_analysis/ | tee logs/RSP_analysis.trim.log
 echo ""
 
 echo "# ------------------------------ #"
-echo "RSP map -s star -i RSP_analysis/ --ref_genome toy_dataset/reference/chr22_with_ERCC92.fa --ref_folder index_folder"
+echo "RSP map -s star -i RSP_analysis/ --ref_genome toy_dataset/reference/chr22_with_ERCC92.fa --ref_folder index_folder --ref_name chr22"
 echo "..."
 echo ""
-RSP map -s star -i RSP_analysis/ --ref_genome toy_dataset/reference/chr22_with_ERCC92.fa --ref_folder index_folder | tee logs/RSP_analysis.map.log
+RSP map -s star -i RSP_analysis/ --ref_genome toy_dataset/reference/chr22_with_ERCC92.fa --ref_folder index_folder --ref_name chr22 | tee logs/RSP_analysis.map.log
 echo ""
 
 echo "# ------------------------------ #"
-echo "RSP counts -s star -i RSP_analysis/ --ref_annot toy_dataset/reference/chr22_with_ERCC92.gtf"
+echo "RSP count -s star -i RSP_analysis/ --ref_annot toy_dataset/reference/chr22_with_ERCC92.gtf"
 echo "..."
 echo ""
-RSP counts -s star -i RSP_analysis/ --ref_annot toy_dataset/reference/chr22_with_ERCC92.gtf | tee logs/RSP_analysis.counts.log
+RSP count -s star -i RSP_analysis/ --ref_annot toy_dataset/reference/chr22_with_ERCC92.gtf | tee logs/RSP_analysis.counts.log
 echo ""
